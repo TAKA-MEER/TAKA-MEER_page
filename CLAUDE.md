@@ -1,6 +1,7 @@
 # TAKA-MEER_page
 
-配電盤上部確認用ロボットを開発する「高見舎」プロジェクトの紹介サイト。
+配電盤上部確認用ロボットを開発する「高見舎（タカミヤ、英語表記 TAKA-MEER）」プロジェクトの紹介サイト。
+発表会・展示の補足資料として、展示で伝えきれない詳細を来場者が読めるようにするのが目的（スマホ閲覧前提）。
 GitHub Pages で一般公開する静的サイト（素の HTML/CSS/JS、ビルドなし）。
 
 運用方針の詳細は [docs/operations.md](docs/operations.md)、ページ構成の計画は [docs/site-plan.md](docs/site-plan.md) を参照。
