@@ -1,0 +1,18 @@
+# 公開NGの参考資料
+reference/private/*
+!reference/private/.gitkeep
+
+# OS / エディタ
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+*.swp
+
+# CAD元データ（誤コミット防止）
+*.SLDPRT
+*.SLDASM
+*.SLDDRW
+*.sldprt
+*.sldasm
+*.slddrw

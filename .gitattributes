@@ -1,0 +1,12 @@
+# Windows / Ubuntu 両方で編集するため、テキストは LF に統一
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
