@@ -93,6 +93,313 @@ h1, h2, h3 {
   padding: 14px 0;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* 詳しさの表示灯：配電盤の表示灯に見立て、点灯数でページの専門度を示す */
+.depth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.lamps {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.lamps i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+}
+
+.lamps i.on {
+  background: var(--safe);
+  border-color: var(--safe);
+}
+
+/* パンくず */
+.crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.crumbs li + li::before {
+  content: "／";
+  margin: 0 0.4em;
+}
+
+/* 下層ページの見出し */
+.page-head {
+  padding: 32px 0 48px;
+}
+
+.page-head h1 {
+  margin: 12px 0 16px;
+  font-size: clamp(2rem, 8vw, 3rem);
+  letter-spacing: 0.04em;
+}
+
+.page-head .lead {
+  margin: 0;
+  max-width: 34em;
+  font-size: clamp(1.05rem, 3.6vw, 1.2rem);
+  line-height: 1.9;
+}
+
+.page-head .code-name {
+  display: block;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.section h3 {
+  margin: 32px 0 8px;
+  font-size: 1.15rem;
+}
+
+.prose > h3 {
+  max-width: 38em;
+}
+
+.note {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* 機能の一覧（試験の流れの順なので番号を振る） */
+.functions {
+  list-style: none;
+  counter-reset: fn;
+  margin: 32px 0 0;
+  padding: 0;
+  max-width: 46em;
+}
+
+.functions li {
+  counter-increment: fn;
+  border-top: 1px solid var(--line);
+}
+
+.functions li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.functions a {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  column-gap: 12px;
+  padding: 20px 0;
+  text-decoration: none;
+}
+
+.functions a::before {
+  content: counter(fn);
+  grid-row: span 3;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--safe);
+}
+
+.functions strong {
+  font-size: 1.2rem;
+}
+
+.functions .desc {
+  color: var(--muted);
+}
+
+.functions .more {
+  margin-top: 4px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--safe);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.functions a:hover strong {
+  color: var(--safe);
+}
+
+/* 次の階層へ */
+.deeper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 34em;
+  margin-top: 8px;
+  padding: 20px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.deeper:hover {
+  border-color: var(--safe);
+}
+
+.deeper .lamps i {
+  width: 12px;
+  height: 12px;
+}
+
+.deeper strong {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.deeper span span {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.siblings {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+/* 表 */
+.table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 20px 0 8px;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  min-width: 100%;
+}
+
+th,
+td {
+  padding: 8px 16px 8px 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+thead th {
+  border-top: 0;
+  border-bottom: 2px solid var(--ink);
+  font-size: 0.875rem;
+}
+
+tbody th {
+  font-weight: 400;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+td.num {
+  font-family: var(--font-num);
+  font-size: 1.05rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+code {
+  font-family: var(--font-num);
+  font-size: 1.02em;
+  letter-spacing: 0.02em;
+}
+
+/* 処理の流れ */
+.flow {
+  list-style: none;
+  margin: 20px 0;
+  padding: 0;
+  max-width: 38em;
+}
+
+.flow li {
+  position: relative;
+  padding: 10px 0 10px 16px;
+  border-left: 3px solid var(--safe);
+}
+
+.flow li + li {
+  margin-top: 14px;
+}
+
+.flow li + li::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: -14px;
+  border: 7px solid transparent;
+  border-top-color: var(--safe);
+  border-bottom: 0;
+}
+
+.flow strong {
+  display: block;
+}
+
+.flow span {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* 比較の数値 */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 34em;
+  margin: 24px 0 8px;
+}
+
+.compare div {
+  padding-top: 8px;
+  border-top: 3px solid var(--line);
+}
+
+.compare div.better {
+  border-top-color: var(--safe);
+}
+
+.compare dl {
+  margin: 8px 0 0;
+}
+
+.compare dt {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.compare dd {
+  margin: 0 0 8px;
+  font-family: var(--font-num);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
 .logo {
   font-weight: 700;
   text-decoration: none;

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>プロジェクトについて | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="高見舎（MIRS2602）の背景、MIRS、これまでの歩み、開発の進め方、ソースコード。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">プロジェクトについて</li></ol></nav>
+        <h1>プロジェクトについて</h1>
+        <p class="lead">高見舎は、沼津高専 電子制御工学科の MIRS で、2026年度のチーム MIRS2602 が取り組んでいるプロジェクトです。</p>
+      </div>
+    </div>
+
+    <section class="section" id="background">
+      <div class="container prose">
+        <h2>工場見学で見つけた課題</h2>
+        <p>
+          電機メーカーとの話し合いと工場見学を通して、配電盤の立会試験に2つの課題があることを知りました。
+        </p>
+        <ul class="checks">
+          <li>盤の上面（高さ約2.3m）を確認するために脚立に登る必要があり、年配のお客様もいるため転落の危険が大きい</li>
+          <li>試験結果を成績書に記録する間、お客様が待たされる</li>
+        </ul>
+        <p>
+          試験をより安全で快適なものにすることを目指し、ロボットと資料作成の道具の開発を始めました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="mirs">
+      <div class="container prose">
+        <h2>MIRS について</h2>
+        <p>
+          MIRS は、沼津工業高等専門学校 電子制御工学科で行っている、チームでのシステム開発教育プログラム（PBL）です。
+          毎年4月から翌年2月ごろまで、チームで1つのシステムの開発に取り組みます。
+          高見舎は、2026年度のチーム MIRS2602 のプロジェクトです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="history">
+      <div class="container prose">
+        <h2>これまでの歩み</h2>
+        <ol class="timeline">
+          <li><span class="date">2026年4月</span>チーム結成、役割分担</li>
+          <li><span class="date">5月</span>工場見学を経て、立会試験を支援するロボットに取り組むことを決める</li>
+          <li><span class="date">6月</span>プロジェクト名を「高見舎」に決定</li>
+          <li><span class="date">7月</span>テーマ発表。PoC（概念実証）の構想をまとめる</li>
+          <li><span class="date">8月17日</span>追従走行の試験。約170mを完走するが、人の手での復帰が5回必要</li>
+          <li><span class="date">9月7日</span>教示再生走行で、同じコースを人の介入なしで完走</li>
+          <li><span class="date">9月</span>約3時間の模擬立会試験で、議事録の自動生成を検証</li>
+          <li><span class="date">9月14日</span>試験場を模した会場で、5か所の盤の前への自動移動を検証</li>
+          <li><span class="date">9月22日</span>昇降機の自動昇降を確認</li>
+          <li><span class="date">10月</span>機体全体の設計</li>
+          <li class="upcoming"><span class="date">12月12日</span>学内発表</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="container prose">
+        <h2>開発の進め方</h2>
+        <p>
+          まず PoC（概念実証）で、考えられる方式を削らずに全部つくって試験します。
+          そのあと MVP（最小限の実用品）で、採用しなかった方式を削っていきます。
+          方式の比較は学内の試験で1方式あたり10〜30回、実際の施設での実証では1〜2回しか試せないため、比較と取捨選択は学内の試験で行います。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="source">
+      <div class="container prose">
+        <h2>ソースコード</h2>
+        <p>開発しているソフトウェアは GitHub で公開しています。</p>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/th-system">th-system</a></th><td>走行部（盤の前まで運ぶ）</td></tr>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/hve-system">hve-system</a></th><td>昇降機とカメラ（盤の上を見る）</td></tr>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/lr-system">lr-system</a></th><td>議事録システム（試験を記録する）</td></tr>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/TAKA-MEER_page">TAKA-MEER_page</a></th><td>このサイト</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">
+          走行部の音声アナウンスの音声合成に <a href="https://voicevox.hiroshiba.jp/nemo/">VOICEVOX Nemo</a> を使用しています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="../move/">盤の前まで運ぶ</a></li><li><a href="../lift/">盤の上を見る</a></li><li><a href="../records/">試験を記録する</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

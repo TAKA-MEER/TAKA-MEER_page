@@ -15,8 +15,9 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="container">
+    <div class="container header-row">
       <a class="logo" href="./">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち1（概要）"><span class="lamps" aria-hidden="true"><i class="on"></i><i></i><i></i></span>概要</p>
     </div>
   </header>
 
@@ -121,79 +122,38 @@
       </div>
     </section>
 
-    <section class="section" id="solution">
+    <section class="section" id="functions">
       <div class="container">
         <div class="prose">
-          <h2>ロボットがカメラを持ち上げ、手元の画面で見る</h2>
+          <h2>運んで、見て、記録する</h2>
           <p>
-            脚立の代わりに、ロボットが盤の前まで移動し、昇降機でカメラを盤の上まで持ち上げます。
-            確認する人は床に立ったまま、タブレットに映る映像で盤の上面を見られます。
+            立会試験の流れに沿って、3つの機能を開発しています。
+            それぞれのページは、読み進めるほど技術的に詳しくなります。右上の表示灯が、そのページの詳しさの目安です。
           </p>
         </div>
-        <ol class="steps">
+        <ol class="functions">
           <li>
-            <h3>盤の前まで走る</h3>
-            <p>走行部が保管場所から試験場へ移動し、盤の前で止まります。</p>
+            <a href="move/">
+              <strong>盤の前まで運ぶ</strong>
+              <span class="desc">カメラを載せた機体が、保管場所から試験場へ移動し、盤の前で止まります。</span>
+              <span class="more">しくみを見る</span>
+            </a>
           </li>
           <li>
-            <h3>カメラを上げる</h3>
-            <p>映像を見ながら昇降機を上げ、ちょうどよい高さで止めます。天井に近づくと自動で止まります。</p>
+            <a href="lift/">
+              <strong>盤の上を見る</strong>
+              <span class="desc">昇降機でカメラを盤の上まで持ち上げ、確認する人は床に立ったまま手元の画面で見ます。</span>
+              <span class="more">しくみを見る</span>
+            </a>
           </li>
           <li>
-            <h3>向きを合わせて見る</h3>
-            <p>カメラを左右・上下に動かし、拡大して盤の上面を確認します。</p>
-          </li>
-          <li>
-            <h3>下げて次の盤へ</h3>
-            <p>カメラを下げてから、次の盤へ移動します。</p>
+            <a href="records/">
+              <strong>試験を記録する</strong>
+              <span class="desc">試験中の会話から議事録をつくり、測定値を声で成績表に記入します。お客様の待ち時間を減らします。</span>
+              <span class="more">しくみを見る</span>
+            </a>
           </li>
         </ol>
-      </div>
-    </section>
-
-    <section class="section section-panel" id="system">
-      <div class="container">
-        <div class="prose">
-          <h2>走る部分と、見る部分</h2>
-          <p>
-            機体は2つのシステムでできています。互いに通信しない独立した作りにして、片方の変更がもう片方に影響しないようにしました。
-            非常停止ボタンは電源を共有しているので、押すと両方が止まります。
-          </p>
-        </div>
-
-        <div class="systems">
-          <article class="system">
-            <h3>走行部 <span class="code-name" lang="en">th-system</span></h3>
-            <p>
-              クローラー型の車体が、LiDARで周囲を測りながら移動します。
-              一度人が操作して走らせた経路を記録し、同じ経路を自分でたどれます（教示再生）。
-              人の脚を検知して後をついていく追従機能も開発しています。
-            </p>
-            <dl class="spec">
-              <dt>車体</dt><dd>CuGoV3（クローラー）</dd>
-              <dt>周囲の計測</dt><dd>2D-LiDAR RPLIDAR S1（全周360°）</dd>
-              <dt>制御</dt><dd>ESP32、Raspberry Pi 4、PC（ROS 2）</dd>
-              <dt>操作</dt><dd>タブレット・PCのブラウザ</dd>
-            </dl>
-            <a class="repo" href="https://github.com/TAKA-MEER/th-system">ソースコードを見る（GitHub）</a>
-          </article>
-
-          <article class="system">
-            <h3>昇降・カメラ <span class="code-name" lang="en">hve-system</span></h3>
-            <p>
-              パワーウィンドウ用のモーターで昇降機を動かし、先端のカメラを盤の上まで持ち上げます。
-              カメラは左右と上下に向きを変えられます。
-              高さは事前に登録せず、操作する人が映像を見て決めます。
-            </p>
-            <dl class="spec">
-              <dt>昇降</dt><dd>パワーウィンドウモーター、ESP32</dd>
-              <dt>高さの計測</dt><dd>超音波距離計（昇降の高さ、天井までの距離）</dd>
-              <dt>カメラ部</dt><dd>Raspberry Pi 4、ステッピングモーター（左右）、サーボモーター（上下）</dd>
-              <dt>操作</dt><dd>ブラウザ</dd>
-            </dl>
-            <a class="repo" href="https://github.com/TAKA-MEER/hve-system">ソースコードを見る（GitHub）</a>
-          </article>
-        </div>
       </div>
     </section>
 
@@ -206,44 +166,36 @@
         </p>
         <ul class="checks">
           <li>動作の切り替えはすべて人の操作で行い、誰も押していないのに動き出すことがないようにする</li>
-          <li>異常を検知したらモーターの出力をすぐにゼロにする。通信が途絶えても、遅くとも0.6秒で止まる</li>
-          <li>画面の非常停止ボタンは、ほかの表示に隠れない位置に常に出しておく</li>
+          <li>進路に人や物が現れたら、手前で止まる</li>
+          <li>機体の非常停止ボタンを押すと、走行部と昇降機の電源が切れる。電源が切れても昇降機は落ちない</li>
           <li>昇降機は上端と天井の手前で自動的に止まる</li>
         </ul>
       </div>
     </section>
 
-    <section class="section" id="history">
-      <div class="container prose">
-        <h2>これまでの歩み</h2>
-        <ol class="timeline">
-          <li><span class="date">2026年4月</span>チーム結成、役割分担</li>
-          <li><span class="date">5月</span>工場見学を経て、立会試験を支援するロボットに取り組むことを決める</li>
-          <li><span class="date">6月</span>プロジェクト名を「高見舎」に決定</li>
-          <li><span class="date">7月</span>テーマ発表</li>
-          <li><span class="date">8〜9月</span>走行部・昇降機・カメラそれぞれの概念実証（PoC）</li>
-          <li><span class="date">10月</span>機体全体の設計</li>
-          <li class="upcoming"><span class="date">12月12日</span>学内発表</li>
-        </ol>
-      </div>
-    </section>
-
     <section class="section" id="about">
       <div class="container prose">
-        <h2>MIRSについて</h2>
+        <h2>沼津高専の学生チームがつくっています</h2>
         <p>
-          MIRSは、沼津工業高等専門学校 電子制御工学科で行っているチームでのシステム開発教育プログラム（PBL）です。
-          高見舎は、2026年度のチーム MIRS2602 のプロジェクトです。
+          高見舎は、沼津工業高等専門学校 電子制御工学科のシステム開発教育プログラム「MIRS」で、2026年度のチーム MIRS2602 が取り組んでいるプロジェクトです。
+          12月12日の学内発表に向けて開発を進めています。
         </p>
-        <p class="credit">
-          音声アナウンスの音声合成に <a href="https://voicevox.hiroshiba.jp/nemo/">VOICEVOX Nemo</a> を使用しています。
-        </p>
+        <p><a href="project/">プロジェクトについて詳しく</a></p>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="./">概要</a></li>
+          <li><a href="move/">盤の前まで運ぶ</a></li>
+          <li><a href="lift/">盤の上を見る</a></li>
+          <li><a href="records/">試験を記録する</a></li>
+          <li><a href="project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
       <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
       <small>&copy; 2026 高見舎（MIRS2602）</small>
     </div>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>盤の上を見る | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="昇降機でカメラを盤の上まで持ち上げ、手元の画面で盤の上面を確認するしくみ。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">盤の上を見る</li></ol></nav>
+        <h1>盤の上を見る</h1>
+          <p class="code-name" lang="en">hve-system</p>
+        <p class="lead">盤の前に止まった機体の上で、昇降機がカメラを持ち上げます。確認する人は床に立ったまま、手元の画面で盤の上面を見られます。</p>
+      </div>
+    </div>
+
+    <section class="section" id="flow">
+      <div class="container">
+        <div class="prose">
+          <h2>盤の前での操作</h2>
+        </div>
+        <ol class="steps">
+          <li>
+            <h3>盤の前に止まる</h3>
+            <p>走行部が機体を盤の前に止めます。</p>
+          </li>
+          <li>
+            <h3>映像を見ながら上げる</h3>
+            <p>手元の画面でカメラ映像を見ながら昇降機を上げます。速度はスライダーで変えられます。</p>
+          </li>
+          <li>
+            <h3>よい高さで止める</h3>
+            <p>盤の上面が見えたところで、操作する人が止めます。</p>
+          </li>
+          <li>
+            <h3>向きを合わせて確認</h3>
+            <p>カメラを左右・上下に動かし、拡大して盤の上面を確かめます。</p>
+          </li>
+          <li>
+            <h3>下げて次の盤へ</h3>
+            <p>昇降機を下げてから、次の盤へ移動します。</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="height">
+      <div class="container prose">
+        <h2>高さは、映像を見て人が決める</h2>
+        <p>
+          盤ごとの高さを前もって測ったり登録したりする必要はありません。
+          カメラの映像を見ながら上げていき、見たいものが映ったところで止めます。
+          左右と上下に向きを変えられるので、止まった位置が少しずれていても、カメラの向きで補えます。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="limits">
+      <div class="container prose">
+        <h2>上がりすぎない、落ちない</h2>
+        <ul class="checks">
+          <li>下端はスイッチ、上端と天井は超音波の距離計で検知し、手前で上昇を止める</li>
+          <li>センサーの値が届かないときは「安全とは言えない」とみなし、上昇させない</li>
+          <li>昇降機は、画面のボタンを押している間だけ動く</li>
+          <li>機体の非常停止ボタンで電源が切れても、ギアが自分を支えるので昇降機は落ちない</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="independent">
+      <div class="container prose">
+        <h2>走行部とは別のシステムにした</h2>
+        <p>
+          昇降・カメラのシステムは、走行部の上に載って運ばれますが、走行部とは通信しません。
+          片方の仕様変更がもう片方に波及しないようにするためです。共有しているのは機体と無線のアクセスポイント、そして電源だけです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="deeper">
+      <div class="container">
+        <a class="deeper" href="tech.html">
+          <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          <span><strong>昇降・カメラの技術詳細へ</strong><span>ユニット構成、上下端と天井の安全仕様、非常停止、PoC の結果</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="../move/">盤の前まで運ぶ</a></li><li><a href="../records/">試験を記録する</a></li><li><a href="../project/">プロジェクトについて</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

@@ -9,9 +9,12 @@
 |---|---|---|
 | [TAKA-MEER/th-system](https://github.com/TAKA-MEER/th-system) | 走行系（移動システム） | Python（ROS2）、C++（ESP32） |
 | [TAKA-MEER/hve-system](https://github.com/TAKA-MEER/hve-system) | 昇降機と上部カメラ | Python、JavaScript（WebUI） |
+| [TAKA-MEER/lr-system](https://github.com/TAKA-MEER/lr-system) | 資料作成（議事録） | Python |
+
+PoC の数値と資料作成機能は [poc-results.md](poc-results.md)。
 
 両システムは**意図的に独立**させている（互いに通信しない。共有するのは機体と無線 AP だけ）。
-物理非常停止ボタンは電源系統を共有しているので、押すと両方止まる。
+物理非常停止ボタンは電源系統を共有しているので、押すと走行部と昇降機が止まる（カメラ部のヨー・ピッチはモバイルバッテリ給電なので止まらない）。電源が切れても昇降機はウォームギアで自己保持し落下しない。
 
 ## 全体像
 

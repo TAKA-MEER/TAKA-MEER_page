@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>資料作成の技術詳細 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="議事録システム lr-system と成績表音声入力アプリの構成、処理の流れ、検証結果。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち3（技術詳細）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>技術詳細</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">試験を記録する</a></li><li aria-current="page">技術詳細</li></ol></nav>
+        <h1>資料作成の技術詳細</h1>
+          <p class="code-name" lang="en">lr-system</p>
+        <p class="lead">音声認識（faster-whisper）とローカル LLM（Ollama）で議事録をつくるシステムと、成績表の音声入力アプリの中身をまとめます。</p>
+      </div>
+    </div>
+
+    <section class="section" id="architecture">
+      <div class="container prose">
+        <h2>議事録システムの構成</h2>
+        <p>
+          Windows PC 上の Docker で、Webサーバーと音声認識を担うコンテナと、LLM を担うコンテナの2つを動かします。
+          コンテナを分けたのは、音声認識モデルと LLM を同時に GPU メモリに載せられないため、片方を解放してからもう片方を読み込む逐次管理をするためです。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">要素</th><th scope="col">内容</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">minutes-app</th><td>FastAPI（HTTP・WebSocket）、faster-whisper large-v3、議事録生成ロジック</td></tr>
+              <tr><th scope="row">minutes-ollama</th><td>Ollama（qwen3.5:9b）</td></tr>
+              <tr><th scope="row">GPU</th><td>VRAM 8GB 級（検証は RTX 4060 Ti 8GB）</td></tr>
+              <tr><th scope="row">画面</th><td>ブラウザ。内蔵マイク用とワイヤレスイヤホン用の2ウィンドウ</td></tr>
+              <tr><th scope="row">出力</th><td>docx（PDF 変換可）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          外部通信をしないことを検証中に確かめ、モデル取得ライブラリ（<code>huggingface_hub</code>）からの意図しない通信を検出して遮断しました（<code>HF_HUB_OFFLINE=1</code>）。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="audio">
+      <div class="container prose">
+        <h2>音声処理の流れ</h2>
+        <ol class="flow">
+          <li><strong>ブラウザで録音</strong><span>MediaRecorder で WebM/Opus を5秒ごとのチャンクにする</span></li>
+          <li><strong>WebSocket で送信</strong><span>バイナリフレームでサーバーへ</span></li>
+          <li><strong>ffmpeg で変換</strong><span>16kHz モノラル WAV</span></li>
+          <li><strong>faster-whisper large-v3 で文字起こし</strong><span>時刻付きのセグメントに分かれる</span></li>
+          <li><strong>話者判定</strong><span>自社側／お客様側のラベルを付ける</span></li>
+          <li><strong>画面に表示</strong><span>JSON のテキストフレームで返す</span></li>
+        </ol>
+        <p>
+          チャンクを短くするとリアルタイム性は上がりますが、文字起こしの精度が下がります。
+          5秒で機械的に区切ることによる文の断片化が、残っている誤りの主な要因です。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="speaker">
+      <div class="container prose">
+        <h2>話者判定</h2>
+        <p>
+          自社側の人はワイヤレスイヤホンを付けます。イヤホンのマイクで装着者が話している時間帯の発言を自社側、それ以外をお客様側とします。
+        </p>
+        <ol class="flow">
+          <li><strong>音量を記録</strong><span>イヤホンの音声を50msのフレームに分け、各フレームの音量（dB）を記録</span></li>
+          <li><strong>閾値を自動で決める</strong><span>直近60秒の分布から、雑音の床（下位20%）＋6dB以上、かつ発話の大きさ（上位2%）から16dB以内</span></li>
+          <li><strong>セグメントごとに判定</strong><span>同じ時間帯のフレームのうち閾値を超えた割合が0.3を超えれば自社側</span></li>
+        </ol>
+        <p>
+          以前の方式（5秒チャンク全体の音量で判定）では、声が10dB小さいだけで全件がお客様側になるなど、声量とマイク感度に強く依存していました。
+          この方式で、イヤホン非装着者の発言を除いた正解率は 0.80〜0.92 から 0.88〜0.99 に改善しました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="llm">
+      <div class="container prose">
+        <h2>LLM による議事録生成</h2>
+        <p>文字起こし全文を一度に渡すとコンテキスト長を超えるため、2段階で処理します。</p>
+        <ol class="flow">
+          <li><strong>Stage 1：要点の抽出</strong><span>全文を6000文字ごとに分割し、各チャンクから協議事項とアクションを JSON で抽出（順次実行）</span></li>
+          <li><strong>名寄せ（プログラム）</strong><span>話題名を正規化して同じ協議事項をまとめる。状態は時系列で後の記述を採用。A盤／B盤のように英数字で区別できるものは別扱い</span></li>
+          <li><strong>Stage 2：最終議事録</strong><span>JSON スキーマで出力を制約して生成。失敗したら1回やり直し、それでも失敗すれば Stage 1 の結果を統合して出力</span></li>
+          <li><strong>docx に整形</strong><span>協議事項（要望・回答・状態）とアクション（内容・担当・期限）</span></li>
+        </ol>
+        <p>
+          LLM は qwen2.5:7b、qwen3:8b、qwen3.5:9b を比較し、すべての指標で最もよかった qwen3.5:9b を採用しました。
+          qwen3:8b は日付のハルシネーションと、途中で結論が変わった協議の扱いに失敗しました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="eval">
+      <div class="container prose">
+        <h2>検証</h2>
+        <p>
+          実際の工場で試すことが難しいため、配電盤の出荷前立会試験を模した台本を VOICEVOX の合成音声で読み上げ、WebSocket に直接注入しました。
+          生成された議事録は、正解データと自動で比較して評価します。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">項目</th><th scope="col">短時間（約8.8分）</th><th scope="col">長時間（約3時間、139発話）</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">文字誤り率（CER）</th><td class="num">0.149</td><td class="num">0.174</td></tr>
+              <tr><th scope="row">協議事項の再現率</th><td class="num">7/7</td><td class="num">11/11</td></tr>
+              <tr><th scope="row">アクションの再現率</th><td class="num">3/3</td><td class="num">3/3</td></tr>
+              <tr><th scope="row">実行回数</th><td class="num">12回</td><td class="num">3回</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          初期版の CER は 0.316 で、WebM の切り出し処理を直して改善しました。
+          生成中の VRAM 使用量は 5732〜6309MiB（上限 8188MiB）で、長時間でも増え続けないことを確かめました。
+        </p>
+        <p>
+          無音区間での文字起こしのハルシネーション、Stage 2 のコンテキスト超過、話題をまとめるロジックの誤りの3件は、短時間の試験では現れず、長時間の試験で初めて見つかりました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="limits">
+      <div class="container prose">
+        <h2>分かっている制限</h2>
+        <ul class="checks">
+          <li>実音声・実際の工場では未検証。合成音声は人の声より明瞭なので、精度は下がる可能性が高い</li>
+          <li>騒音と残響に弱い。CER は SNR 5dB で約0.24、残響1.5秒で約0.35、両方が重なると約0.5</li>
+          <li>イヤホンを付けていない自社側の発言はお客様側と判定される。発言する自社側の人は全員装着する運用にする</li>
+          <li>名前の似た別の協議事項が1件にまとめられることがある</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="sheet">
+      <div class="container prose">
+        <h2>成績表の音声入力アプリ</h2>
+        <p>Windows で単独に動く、オフラインのデスクトップアプリです。</p>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">言語・画面</th><td>Python、Tkinter（sv-ttk）</td></tr>
+              <tr><th scope="row">音声認識</th><td>faster-whisper（オフライン）</td></tr>
+              <tr><th scope="row">Excel 操作</th><td>openpyxl</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ol class="flow">
+          <li><strong>プッシュトゥトークで聞き取る</strong><span>ボタンを押している間だけ認識する</span></li>
+          <li><strong>キーワードと数値を解析</strong><span>項目名の別名、漢数字、電気の単位を含む数値を解釈</span></li>
+          <li><strong>行を探す</strong><span>シリアル番号か日付で ID 列を検索。なければ新しい行をつくる</span></li>
+          <li><strong>セルに記入して確かめる</strong><span>数値の範囲チェックで入力ミスを知らせ、画面のグリッドで直接直せる</span></li>
+        </ol>
+        <p>
+          現在は自作のテスト用ファイルでの検証にとどまっています。
+          「減極性」の中の「極性」を誤って検出する、言いよどみがそのまま保存されるなどの不具合を直してきました。実際の点検現場での確認はこれからです。
+        </p>
+        <p>
+          議事録システムのソースは <a href="https://github.com/TAKA-MEER/lr-system">lr-system リポジトリ</a> にあります。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかの技術詳細</h2>
+        <ul class="siblings"><li><a href="../move/tech.html">走行部の技術詳細</a></li><li><a href="../lift/tech.html">昇降・カメラの技術詳細</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

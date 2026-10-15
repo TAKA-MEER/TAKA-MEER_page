@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>盤の前まで運ぶ | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="カメラを載せた機体を、保管場所から試験場の盤の前まで移動させるしくみ。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">盤の前まで運ぶ</li></ol></nav>
+        <h1>盤の前まで運ぶ</h1>
+          <p class="code-name" lang="en">th-system</p>
+        <p class="lead">カメラを載せた機体を、保管場所から試験場の盤の前まで移動させます。運用する人が1人でも扱えることを目指しています。</p>
+      </div>
+    </div>
+
+    <section class="section" id="days">
+      <div class="container prose">
+        <h2>前日に覚えて、当日は選ぶだけ</h2>
+        <p>
+          試験の前日に、ロボットに会場を案内して地図をつくり、盤の位置を1つずつ登録します。
+          当日は、確認したい盤を画面で選ぶだけで、ロボットが自分で移動して盤の前に止まります。
+        </p>
+        <p>
+          ブースを盤に見立てた試験では、5か所の登録を4分弱で終え、5か所すべてを途中で止まらずに回りきりました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="route">
+      <div class="container prose">
+        <h2>人について行くより、覚えた道をたどる</h2>
+        <p>
+          保管場所から試験場までの移動で、最初に試したのは、LiDAR（レーザーで周囲の距離を測るセンサー）で人の脚を見分け、後をついていく「追従走行」でした。
+          校舎の廊下約170mを完走できたものの、壁際で止まってしまうことが5回あり、そのたびに人の手で復帰させる必要がありました。
+        </p>
+        <p>
+          そこで、人が一度操作して走らせた経路を記録し、ロボットがひとりで同じ経路をなぞる「教示再生走行」を開発しました。
+          同じコースを、人の手を借りずに完走できました。
+        </p>
+        <div class="compare">
+          <div>
+            <h3>追従走行</h3>
+            <dl>
+              <dt>所要時間</dt><dd>10分50秒</dd>
+              <dt>人の手で復帰</dt><dd>5回</dd>
+            </dl>
+          </div>
+          <div class="better">
+            <h3>教示再生走行</h3>
+            <dl>
+              <dt>所要時間</dt><dd>6分13秒</dd>
+              <dt>人の手で復帰</dt><dd>0回</dd>
+            </dl>
+          </div>
+        </div>
+        <p class="note">校舎3階 約170mを1周した結果。どちらも1回の試験での値です。</p>
+      </div>
+    </section>
+
+    <section class="section" id="obstacle">
+      <div class="container prose">
+        <h2>人や物が前に来たら止まる</h2>
+        <p>
+          進路に人が飛び出したり物が置かれたりすると、ロボットは約30cm手前で止まります。
+          よけて進むことはしません。障害物がなくなると、約1.5秒で自分から走り出します。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="ui">
+      <div class="container prose">
+        <h2>操作はタブレットの画面だけ</h2>
+        <p>
+          走り方の選択も、開始・停止も、タブレットやPCのブラウザで行います。
+          専用アプリやコマンド入力は使いません。画面の非常停止ボタンは、どの画面でもほかの表示に隠れない位置に出ています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="deeper">
+      <div class="container">
+        <a class="deeper" href="tech.html">
+          <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          <span><strong>走行部の技術詳細へ</strong><span>ハードウェアとソフトウェアの構成、7つの走行方式、安全設計、PoC の数値</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="../lift/">盤の上を見る</a></li><li><a href="../records/">試験を記録する</a></li><li><a href="../project/">プロジェクトについて</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

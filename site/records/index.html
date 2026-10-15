@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>試験を記録する | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="試験中の会話から議事録をつくり、測定値を声で成績表に記入するしくみ。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">試験を記録する</li></ol></nav>
+        <h1>試験を記録する</h1>
+        <p class="lead">試験中の会話から議事録をつくり、読み上げた測定値を成績表に記入します。書類づくりを待つお客様の時間を減らすための道具です。</p>
+      </div>
+    </div>
+
+    <section class="section" id="why">
+      <div class="container prose">
+        <h2>書類ができるまで、お客様が待っている</h2>
+        <p>
+          立会試験では、測定した結果を成績書に記録し、話し合った内容を議事録にまとめます。
+          その書類づくりの間、お客様は待つことになります。
+          そこで、試験中の会話や読み上げた測定値から、書類を自動でつくる仕組みを開発しています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="tools">
+      <div class="container">
+        <div class="prose">
+          <h2>2つの道具</h2>
+        </div>
+        <div class="systems">
+          <article class="system">
+            <h3>議事録をつくる</h3>
+            <p>
+              試験中の会話をリアルタイムで文字に起こし、試験が終わるとすぐ、AIが議事録をまとめます。
+              お客様からの要望と自社側の回答、その結論、誰がいつまでに何をするかを整理して、Word ファイルとして出力します。
+            </p>
+            <p>
+              自社側の人がワイヤレスイヤホンを付けておくと、その声かどうかで「自社側」と「お客様側」の発言を見分けます。
+            </p>
+          </article>
+          <article class="system">
+            <h3>成績表に声で記入する</h3>
+            <p>
+              測定値を声で読み上げると、Excel の成績表の該当する欄に記入されます。
+              漢数字や電気の単位を含む言い方も数値に直し、決められた範囲から外れた値は入力ミスとして知らせます。
+            </p>
+            <p>
+              聞き取るのは、ボタンを押している間だけです。
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="local">
+      <div class="container prose">
+        <h2>会話の内容を外に出さない</h2>
+        <p>
+          試験の会話には、お客様の製品に関わる内容が含まれます。
+          文字起こしもAIによる要約も、すべて試験場に置いたPCの中で処理し、インターネットへは送りません。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="accuracy">
+      <div class="container prose">
+        <h2>どのくらい正確か</h2>
+        <p>
+          2面の盤を対象にした約3時間の模擬立会試験で、議事録の仕組みを検証しました。
+        </p>
+        <div class="compare">
+          <div class="better">
+            <dl>
+              <dt>話し合った事項の拾い漏れ</dt><dd>11件中 0件</dd>
+              <dt>やるべきことの拾い漏れ</dt><dd>3件中 0件</dd>
+            </dl>
+          </div>
+          <div>
+            <dl>
+              <dt>文字起こしの正確さ</dt><dd>約83%</dd>
+            </dl>
+          </div>
+        </div>
+        <p class="note">
+          検証には合成音声を使いました。実際の工場の騒音や、複数の人が同時に話す場面での検証はこれからです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="origin">
+      <div class="container prose">
+        <h2>はじめの構想</h2>
+        <p>
+          プロジェクトの最初の構想では、ロボットが担当者について回りながら試験中の音声を記録し、成績書と議事録に反映するというものでした。
+          現在は、ロボットとは別に、試験場のPCで動く道具として開発しています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="deeper">
+      <div class="container">
+        <a class="deeper" href="tech.html">
+          <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          <span><strong>資料作成の技術詳細へ</strong><span>音声処理と話者判定、LLM による2段階生成、検証の数値と制限</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="../move/">盤の前まで運ぶ</a></li><li><a href="../lift/">盤の上を見る</a></li><li><a href="../project/">プロジェクトについて</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

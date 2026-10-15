@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>走行部の技術詳細 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="走行部 th-system のハードウェア・ソフトウェア構成、走行方式、安全設計、PoC の結果。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち3（技術詳細）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>技術詳細</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">盤の前まで運ぶ</a></li><li aria-current="page">技術詳細</li></ol></nav>
+        <h1>走行部の技術詳細</h1>
+          <p class="code-name" lang="en">th-system</p>
+        <p class="lead">クローラー車体、LiDAR、ROS 2 による走行部の構成と、PoC で得た数値をまとめます。</p>
+      </div>
+    </div>
+
+    <section class="section" id="hardware">
+      <div class="container prose">
+        <h2>ハードウェア構成</h2>
+        <p>
+          処理の大部分はPCが担い、PCは機体に載せず無線でつなぎます。
+          機体側はモーター制御のESP32と、センサー中継のRaspberry Pi 4に役割を分けています。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">機器</th><th scope="col">役割</th><th scope="col">接続</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">CuGoV3</th><td>クローラー車体。左右モーター・エンコーダ</td><td>ESP32</td></tr>
+              <tr><th scope="row">ESP32</th><td>PID＋フィードフォワードの速度制御。IMU、物理非常停止ボタン</td><td>Raspberry Pi 4 にUSBシリアル</td></tr>
+              <tr><th scope="row">Raspberry Pi 4</th><td>Wi-Fiアクセスポイント、LiDARスキャンの配信、ESP32との中継</td><td>Wi-Fi</td></tr>
+              <tr><th scope="row">RPLIDAR S1</th><td>2D-LiDAR。全周360°、10Hz</td><td>Raspberry Pi 4 にUSB</td></tr>
+              <tr><th scope="row">PC</th><td>ROS 2 Humble（Docker）。認識・自己位置推定・計画・状態管理・WebUI配信</td><td>Wi-Fi</td></tr>
+              <tr><th scope="row">タブレット</th><td>WebUI による操作</td><td>Wi-Fi</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          ESP32 は当初 Wi-Fi で直接PCと通信していましたが、教示の途中で通信が途切れる問題が起きたため、2026年9月に Raspberry Pi 4 とのUSBシリアル直結に変更しました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="software">
+      <div class="container prose">
+        <h2>ソフトウェア構成</h2>
+        <p>ROS 2 のパッケージを役割ごとに分けています。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">役割</th><th scope="col">実装</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">ESP32 との通信</th><td><code>th_esp32_bridge</code>：WebSocket サーバー、オドメトリ</td></tr>
+              <tr><th scope="row">安全管理</th><td><code>th_safety</code>（safety_monitor、obstacle_limiter、jog_gate）＋ <code>twist_mux</code></td></tr>
+              <tr><th scope="row">状態管理</th><td><code>th_state</code>：状態機械（FSM）</td></tr>
+              <tr><th scope="row">認識</th><td><code>th_perception</code> ＋ DR-SPAAM による脚検知</td></tr>
+              <tr><th scope="row">教示再生</th><td><code>th_planning</code>：route_recorder、replay_runner</td></tr>
+              <tr><th scope="row">地図・自己位置</th><td>SLAM Toolbox、robot_localization、Nav2</td></tr>
+              <tr><th scope="row">パラメータ</th><td><code>th_params</code>：registry.yaml から各ノードのパラメータを生成・監査</td></tr>
+              <tr><th scope="row">WebUI</th><td>React ＋ rosbridge WebSocket</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="modes">
+      <div class="container prose">
+        <h2>7つの走行方式</h2>
+        <p>
+          保管場所と試験場の間の移動手段として、7つの方式を設計しています。
+          PoC（概念実証）では方式を削らずに全部作って試験し、MVP で採用しなかったものを削る「引き算」で進めます。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">方式</th><th scope="col">内容</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">追従</th><td>LiDAR で選んだ試験員の脚を追い、その軌跡をなぞる</td></tr>
+              <tr><th scope="row">手動</th><td>画面の仮想スティックと速度プリセット（低・中・高）で操作</td></tr>
+              <tr><th scope="row">教示（追従）</th><td>追従しながら経路と地図を記録する</td></tr>
+              <tr><th scope="row">教示（手動）</th><td>手動で走らせながら経路と地図を記録する</td></tr>
+              <tr><th scope="row">教示再生</th><td>記録した経路をひとりでなぞる。逆再生も可能</td></tr>
+              <tr><th scope="row">ライン誘導</th><td>カメラで床の区画線と分岐を認識して走る</td></tr>
+              <tr><th scope="row">電子リード</th><td>試験員がリードを引くと進み、張力がなくなると止まる</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>採否は、①許可 → ②完走率・介入回数 → ③安全 → ④期間内に作れるか、の順で判断します。</p>
+      </div>
+    </section>
+
+    <section class="section" id="safety-design">
+      <div class="container prose">
+        <h2>安全設計</h2>
+        <p>
+          目標「人・物への接触0件、意図しない挙動0件」はほかのすべての目標に優先し、回数を数えるのではなく故障を注入して検証します。
+          設計上の主な決まりは次のとおりです。
+        </p>
+        <ul class="checks">
+          <li>速度指令は必ず優先度つきの多重化（<code>twist_mux</code>）を通す。駆動系へ直接指令するノードを作らない</li>
+          <li>モードの切り替えはすべて明示操作による。試験員が押していないのに動き出す経路を作らない</li>
+          <li>LiDAR の途絶、ESP32 の通信途絶などのフォルトを検知すると、出力を即ゼロにして待機状態へ移る。最終的な保証は ESP32 のウォッチドッグ（600ms）</li>
+          <li>設定値は機体が自分で走らない状態でだけ変更でき、誰が・いつ・何を根拠に決めたかが残る。走行中に安全の閾値が変わる経路を作らない</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="poc">
+      <div class="container prose">
+        <h2>PoC の結果</h2>
+
+        <h3>追従走行（2026年8月17日、校舎3階 約170m）</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">所要時間</th><td class="num">10分50秒</td></tr>
+              <tr><th scope="row">緊急停止</th><td class="num">5回</td><td>すべて壁への接近</td></tr>
+              <tr><th scope="row">対象の見失い</th><td class="num">12回</td><td>再選択で復帰</td></tr>
+              <tr><th scope="row">対象の乗り移り</th><td class="num">1回</td><td></td></tr>
+              <tr><th scope="row">ESP32 通信断</th><td class="num">1回</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>直線でも左右に約1m振れ、安定した直進とは言えませんでした。この結果から教示再生走行を並行して開発しました。</p>
+
+        <h3>教示再生走行（2026年9月3日〜7日）</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">回</th><th scope="col">結果</th><th scope="col">原因と対処</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">1</th><td>失敗</td><td>地図の再構築で経路の一部が壁の中に残った。経路セッションの取り違えを修正</td></tr>
+              <tr><th scope="row">2</th><td>失敗</td><td>曲がり角で自己位置推定に失敗。地図の読み込みが積み上がる不具合を修正</td></tr>
+              <tr><th scope="row">3</th><td>失敗</td><td>クローラーの旋回時の滑り。ジャイロとの融合を有効化</td></tr>
+              <tr><th scope="row">4</th><td>失敗</td><td>Wi-Fi が途切れ教示を完了できず。ESP32 を有線接続に変更</td></tr>
+              <tr><th scope="row">5</th><td>完走</td><td>再生 6分13秒、終点のずれ 500mm 以内、人の介入なし</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">第5回の完走は1回の結果で、再現性の確認はこれからです。</p>
+
+        <h3>試験場内の移動（2026年9月14日、ブース5か所を盤に見立てて）</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">前日準備（地図・盤登録）</th><td class="num">3分55秒</td></tr>
+              <tr><th scope="row">5か所の巡回</th><td class="num">5分11秒</td></tr>
+              <tr><th scope="row">1か所への往復の停止誤差</th><td class="num">位置 7cm／向き 4°</td></tr>
+              <tr><th scope="row">障害物の手前で止まる距離</th><td class="num">約30cm</td></tr>
+              <tr><th scope="row">障害物除去後の再開</th><td class="num">約1.5秒</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>盤の位置の登録方法を3通り比較しました（各3回）。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"></th><th scope="col">機体を盤の前に置いて登録</th><th scope="col">試験員が2点に立って指示</th><th scope="col">地図をタップ</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">登録の誤差</th><td class="num">1.4cm／0.05°</td><td class="num">15.8cm／1.44°</td><td class="num">17.1cm／4.52°</td></tr>
+              <tr><th scope="row">停止位置のずれ（平均）</th><td class="num">12.0cm</td><td class="num">28.7cm</td><td class="num">27.0cm</td></tr>
+              <tr><th scope="row">登録1回の時間</th><td class="num">110秒</td><td class="num">90秒</td><td class="num">85秒</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          登録方法による差より、自動移動そのものの誤差のほうが大きいことが分かりました。
+          カメラ昇降に必要な停止精度はまだ決まっていないため、ここでは相対比較にとどめています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="goals">
+      <div class="container prose">
+        <h2>目標</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">G1</th><td>人・物への接触0件、意図しない挙動0件。ほかのすべてに優先する</td></tr>
+              <tr><th scope="row">G2</th><td>カメラ昇降が要求する許容差内に、手動の微調整なしで止まる</td></tr>
+              <tr><th scope="row">G3</th><td>地図作成と盤登録が試験員1人で完結し、地図の手修正が要らない</td></tr>
+              <tr><th scope="row">G4</th><td>保管場所と試験場の間を、付き添う以上の負担なく移動できる</td></tr>
+              <tr><th scope="row">G5</th><td>往復・準備・試験を再起動なしで完走できる</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          評価の回数が少ない（社内試験で1方式あたり10〜30回）ため、達成の基準は率ではなく「10回中10回」のような回数で書きます。
+        </p>
+        <p>
+          仕様・設計の全体は <a href="https://github.com/TAKA-MEER/th-system">th-system リポジトリ</a> の <code>docs/plan/spec/</code> にあります。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかの技術詳細</h2>
+        <ul class="siblings"><li><a href="../lift/tech.html">昇降・カメラの技術詳細</a></li><li><a href="../records/tech.html">資料作成の技術詳細</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>昇降・カメラの技術詳細 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="昇降・カメラ系 hve-system の構成、設計思想、安全仕様、PoC の結果。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち3（技術詳細）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>技術詳細</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">盤の上を見る</a></li><li aria-current="page">技術詳細</li></ol></nav>
+        <h1>昇降・カメラの技術詳細</h1>
+          <p class="code-name" lang="en">hve-system</p>
+        <p class="lead">昇降部とカメラ部の構成、走行部から独立させた設計、上下端と天井を守る仕様をまとめます。</p>
+      </div>
+    </div>
+
+    <section class="section" id="composition">
+      <div class="container prose">
+        <h2>構成</h2>
+        <p>昇降部とカメラ部の2つのユニットで構成します。カメラ部はバッテリーで動く無線ユニットです。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">ユニット</th><th scope="col">中身</th><th scope="col">役割</th></tr></thead>
+            <tbody>
+              <tr>
+                <th scope="row">昇降部</th>
+                <td>ESP32、モータードライバ Cytron MD10C、パワーウィンドウモーター、下端リミットスイッチ、上向き超音波距離計 HC-SR04</td>
+                <td>カメラ部を上下させる</td>
+              </tr>
+              <tr>
+                <th scope="row">カメラ部</th>
+                <td>Raspberry Pi 4（MIRS のシールド基板を元にした基板）、Webカメラ、ヨー用ステッピングモーター 28BYJ-48（ULN2003）、ピッチ用サーボ SG90、上向き超音波距離計 SRF02（I2C）、モバイルバッテリー</td>
+                <td>映像を送り、向きを変える。操作画面を配信する</td>
+              </tr>
+              <tr>
+                <th scope="row">無線</th>
+                <td>走行部の Raspberry Pi が出すアクセスポイント</td>
+                <td>操作端末・昇降部・カメラ部をつなぐ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>操作画面はカメラ部の Raspberry Pi が1画面で配信します。昇降部のモーターは走行部の駆動系と同じ電源系統です。</p>
+      </div>
+    </section>
+
+    <section class="section" id="principles">
+      <div class="container prose">
+        <h2>設計思想</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">HD-1</th><td>走行部（th-system）から独立させる。互いに通信せず、走行禁止などの連動も設けない</td></tr>
+              <tr><th scope="row">HD-2</th><td>操作画面は走行部と別に持つ</td></tr>
+              <tr><th scope="row">HD-3</th><td>高さは人が映像を見て決める。盤ごとの高さの事前登録を前提にしない</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>HD-1 の帰結として、次のことを受け入れています。</p>
+        <ul class="checks">
+          <li>走行部の画面の非常停止では昇降機は止まらない（物理の非常停止ボタンは電源を共有しているので止まる）</li>
+          <li>昇降機が上がったまま機体が走れてしまう（既知のリスクとして管理）</li>
+          <li>アクセスポイントを共有するので、映像が走行部の通信を圧迫しうる。映像の帯域に上限を設けて確かめる</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="safety-spec">
+      <div class="container prose">
+        <h2>上下端と天井の安全仕様</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">状況</th><th scope="col">振る舞い</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">下端スイッチが押されている</th><td>下降しない。上昇はできる</td></tr>
+              <tr><th scope="row">昇降の高さが上端の閾値に達した</th><td>上昇しない。下降はできる</td></tr>
+              <tr><th scope="row">天井までの距離が閾値以下</th><td>上昇しない（ちょうど閾値でも止める）</td></tr>
+              <tr><th scope="row">天井が近すぎて測れない（約15cm未満）</th><td>天井が近いとみなし、上昇しない</td></tr>
+              <tr><th scope="row">反射が返らない（約6m超）</th><td>天井は遠いとみなし上昇を許す。画面に「天井: 範囲外」と出す</td></tr>
+              <tr><th scope="row">距離が読めない・古い</th><td>上昇しない。センサー故障、通信断、電池切れを含む</td></tr>
+              <tr><th scope="row">同じ方向に動き続けた時間が上限を超えた</th><td>止める。上限は全行程の約1.5倍（実測までは10秒）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          天井の距離はカメラ部で測り、昇降機を動かすのは昇降部なので、判定は無線を挟みます。
+          値が届かないことを「近くない」と扱うと、通信が切れた瞬間に天井へ突っ込むため、届かない値は必ず「上昇しない」側に倒します。
+        </p>
+        <p>
+          昇降の高さの読み値には、無線通信中に回路から単発のノイズが乗り、実際より低い値が混ざることが実機で分かりました。
+          そのため直近5回の有効な読み値の中央値を高さとして使います。代わりに、本当の高さの変化が判定に出るのが約0.2秒遅れることを受け入れています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="estop">
+      <div class="container prose">
+        <h2>非常停止</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">手段</th><th scope="col">昇降機</th><th scope="col">カメラの向き</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">機体の物理非常停止ボタン</th><td>止まる（電源が切れる）</td><td>止まらない（バッテリー給電）</td></tr>
+              <tr><th scope="row">走行部の画面の非常停止</th><td>止まらない</td><td>止まらない</td></tr>
+              <tr><th scope="row">本システムの画面</th><td>ボタンを離せば止まる</td><td>同左</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>パワーウィンドウモーターはウォームギアで自己保持するため、電源が切れても昇降機はその場で止まり、落下しません。</p>
+      </div>
+    </section>
+
+    <section class="section" id="poc">
+      <div class="container prose">
+        <h2>PoC の結果</h2>
+
+        <h3>昇降機構（〜2026年9月）</h3>
+        <p>
+          3mの自動昇降を目標に、アルミ角パイプを3段に組んだ伸縮構造を試作しました。
+          はじめに使った直径2mmのステンレスワイヤーは、曲げ半径が30mm必要で、満たすには設計の全面的な変更が要るため見送りました。
+          柔らかい4mmのパラコードに替えて摩擦を減らし、巻取り機構を取り付けて自動で昇降できることを確認しました。
+        </p>
+        <p>
+          課題として、3段目が摩擦に負けて下がり切らない問題が残っており、全体の再設計が必要です。
+          試験場所の天井に当たるため、最大の長さはまだ確かめられていません。
+        </p>
+
+        <h3>カメラとモーターの制御（Raspberry Pi）</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">項目</th><th scope="col">結果</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">USBカメラの認識（OpenCV）</th><td>確認</td></tr>
+              <tr><th scope="row">静止画の取得</th><td>確認</td></tr>
+              <tr><th scope="row">Flask サーバーの起動とPCからの接続</th><td>確認</td></tr>
+              <tr><th scope="row">API 通信</th><td>確認</td></tr>
+              <tr><th scope="row">サーボ（PWM）・ステッピング（GPIO）の制御</th><td>確認</td></tr>
+              <tr><th scope="row">連続映像（MJPEG）</th><td>未完了。フレームが更新されない</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          この結果をもとに現在のシステムを実装し直しています。PC上でできる実装は済み、実機での確認はこれからです（2026年9月末時点）。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="open">
+      <div class="container prose">
+        <h2>まだ決まっていないこと</h2>
+        <ul class="checks">
+          <li>本システム自体の目標（走行部と同じ「接触0件」の水準を課すか）</li>
+          <li>盤の前での停止に求める許容差。カメラの向きで補えるぶん、走行部への要求を緩められる見込み</li>
+          <li>撮影した画像の保存・一覧まで含めるか</li>
+          <li>上端の閾値、天井までの余裕の距離などの実測値</li>
+        </ul>
+        <p>
+          仕様・設計の全体は <a href="https://github.com/TAKA-MEER/hve-system">hve-system リポジトリ</a> の <code>docs/plan/spec/</code> にあります。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかの技術詳細</h2>
+        <ul class="siblings"><li><a href="../move/tech.html">走行部の技術詳細</a></li><li><a href="../records/tech.html">資料作成の技術詳細</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>
