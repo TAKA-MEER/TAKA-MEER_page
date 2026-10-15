@@ -1,20 +1,33 @@
-/* 仮スタイル。デザイン決定後に作り込む */
+/*
+  色の由来
+  --panel : 配電盤の標準塗装色 マンセル 5Y7/1
+  --danger: 表示灯の赤（脚立の危険）
+  --safe  : 表示灯の緑（ロボットによる安全）
+*/
 :root {
-  --color-bg: #ffffff;
-  --color-text: #1f2328;
-  --color-muted: #59636e;
-  --color-accent: #0b5cad;
-  --color-border: #d1d9e0;
-  --font-base: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+  --paper: #f3f4f1;
+  --panel: #c4c3b6;
+  --panel-soft: #e3e3db;
+  --ink: #1d272e;
+  --muted: #56616a;
+  --line: #b3b3a6;
+  --danger: #c2362b;
+  --safe: #1f7d55;
+
+  --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  --font-num: "Barlow Condensed", "BIZ UDPGothic", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #0d1117;
-    --color-text: #e6edf3;
-    --color-muted: #9198a1;
-    --color-accent: #4493f8;
-    --color-border: #3d444d;
+    --paper: #1a2127;
+    --panel: #4b4d47;
+    --panel-soft: #232b31;
+    --ink: #e7eae6;
+    --muted: #a4adb3;
+    --line: #3d464d;
+    --danger: #f0705f;
+    --safe: #4cc38a;
   }
 }
 
@@ -24,57 +37,470 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-base);
-  line-height: 1.8;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.9;
+  line-break: strict;
+  word-break: auto-phrase;
 }
 
 a {
-  color: var(--color-accent);
+  color: inherit;
+  text-decoration-color: var(--safe);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
+a:hover {
+  color: var(--safe);
+}
+
+:focus-visible {
+  outline: 3px solid var(--safe);
+  outline-offset: 3px;
+}
+
+h1, h2, h3 {
+  line-height: 1.4;
+  font-weight: 700;
+  text-wrap: balance;
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 0 16px;
 }
 
+/* 左端はヒーローとそろえ、本文の行長だけを制限する */
+.prose > h2,
+.prose > p,
+.prose > ul,
+.prose > ol {
+  max-width: 38em;
+}
+
+/* ヘッダー */
 .site-header {
-  border-bottom: 1px solid var(--color-border);
-  padding: 12px 0;
+  padding: 14px 0;
 }
 
 .logo {
-  color: inherit;
   font-weight: 700;
   text-decoration: none;
 }
 
+.logo span {
+  margin-left: 0.4em;
+  font-family: var(--font-num);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* ヒーロー */
 .hero {
-  padding: 96px 0;
-  text-align: center;
+  padding: 24px 0 56px;
+}
+
+.hero-grid {
+  display: grid;
+  gap: 32px;
 }
 
 .hero h1 {
-  margin: 0 0 8px;
-  font-size: clamp(2rem, 6vw, 3.5rem);
+  margin: 0;
+  font-size: clamp(3rem, 13vw, 5.5rem);
+  line-height: 1.2;
+  letter-spacing: 0.06em;
 }
 
-.note {
-  color: var(--color-muted);
+.hero rt {
+  font-size: 0.22em;
+  letter-spacing: 0.3em;
+  font-weight: 400;
+  color: var(--muted);
 }
 
+.hero-en {
+  margin: 0;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 4.5vw, 1.75rem);
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.hero-lead {
+  margin: 28px 0 8px;
+  font-size: clamp(1.3rem, 5vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.hero-sub {
+  margin: 0;
+  color: var(--muted);
+}
+
+.hero-figure {
+  margin: 0;
+}
+
+figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.key::before {
+  content: "";
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.4em;
+  border-radius: 50%;
+  vertical-align: 0.05em;
+}
+
+.key-danger::before { background: var(--danger); }
+.key-safe::before { background: var(--safe); }
+
+/* 図 */
+.drawing {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dim line,
+.dim-arrow {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+
+.dim-arrow { fill: var(--muted); }
+
+.dim-ext {
+  stroke-dasharray: 3 5;
+}
+
+.dim-label {
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 22px;
+  fill: var(--ink);
+}
+
+.danger line,
+.danger circle {
+  stroke: var(--danger);
+  stroke-width: 3.5;
+  fill: none;
+}
+
+.danger .fill-bg { fill: var(--paper); }
+.danger .ladder line { stroke-width: 2.5; opacity: 0.7; }
+
+.panel rect {
+  fill: var(--panel);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.panel .plate { fill: var(--paper); stroke-width: 1.2; }
+.panel .handle { fill: var(--ink); stroke: none; }
+.panel .louver { stroke: var(--ink); stroke-width: 1.5; opacity: 0.5; }
+.lamp-red { fill: var(--danger); }
+.lamp-green { fill: var(--safe); }
+
+.top-equip rect,
+.top-equip path {
+  fill: var(--panel-soft);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.top-equip path { fill: none; }
+
+.target {
+  fill: none;
+  stroke: var(--safe);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+}
+
+.safe rect,
+.safe circle {
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.safe .mast-upper,
+.safe .mast-lower { fill: var(--panel-soft); }
+.safe .camera { fill: var(--safe); }
+.safe .lens { fill: var(--paper); }
+.safe .body { fill: var(--safe); }
+.safe .track { fill: var(--ink); }
+.safe .wheel { fill: var(--panel); stroke-width: 1.5; }
+
+.cone {
+  fill: var(--safe);
+  fill-opacity: 0.16;
+  stroke: var(--safe);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.floor {
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+/* 読み込み時、マストが伸びて盤の上を映す（ページで唯一の自動アニメーション） */
+@media (prefers-reduced-motion: no-preference) {
+  .lift {
+    animation: lift 1.6s cubic-bezier(0.3, 0.7, 0.2, 1) 0.5s both;
+  }
+
+  .cone,
+  .target {
+    animation: appear 0.5s ease-out 2.1s both;
+  }
+
+  @keyframes lift {
+    from { transform: translateY(150px); }
+  }
+
+  @keyframes appear {
+    from { opacity: 0; }
+  }
+}
+
+/* セクション共通 */
+.section {
+  padding: 56px 0;
+  border-top: 1px solid var(--line);
+}
+
+.section h2 {
+  margin: 0 0 20px;
+  font-size: clamp(1.4rem, 5.2vw, 2rem);
+}
+
+.section p {
+  margin: 0 0 1em;
+}
+
+.section-panel {
+  background: var(--panel-soft);
+}
+
+/* 手順（順番に意味があるので番号を振る） */
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 32px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 28px;
+}
+
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  align-content: start;
+  column-gap: 12px;
+}
+
+.steps li::before {
+  content: counter(step);
+  grid-row: span 2;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--safe);
+}
+
+.steps h3 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.steps p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+/* 機体の構成 */
+.systems {
+  display: grid;
+  gap: 40px;
+  margin-top: 36px;
+}
+
+.system h3 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--ink);
+}
+
+.code-name {
+  margin-left: 0.3em;
+  font-family: var(--font-num);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.spec {
+  display: grid;
+  grid-template-columns: 7em 1fr;
+  margin: 20px 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.spec dt,
+.spec dd {
+  margin: 0;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+
+.spec dt {
+  color: var(--muted);
+}
+
+.repo {
+  font-weight: 700;
+}
+
+/* 安全 */
+.checks {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+
+.checks li {
+  position: relative;
+  padding: 12px 0 12px 1.8em;
+  border-top: 1px solid var(--line);
+}
+
+.checks li::before {
+  content: "";
+  position: absolute;
+  left: 0.2em;
+  top: 1.15em;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 50%;
+  background: var(--safe);
+}
+
+/* 歩み */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 20px;
+  border-left: 2px solid var(--line);
+}
+
+.timeline li {
+  position: relative;
+  padding: 0 0 20px 8px;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -27px;
+  top: 0.55em;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.timeline .upcoming::before {
+  background: var(--paper);
+  border: 2px solid var(--safe);
+}
+
+.date {
+  display: block;
+  font-family: var(--font-num);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.credit {
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+/* フッター */
 .site-footer {
-  border-top: 1px solid var(--color-border);
-  padding: 24px 0;
-  color: var(--color-muted);
-  text-align: center;
+  padding: 32px 0 40px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.site-footer p {
+  margin: 0 0 4px;
+}
+
+/* 広い画面 */
+@media (min-width: 760px) {
+  .systems {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 48px;
+  }
+
+  .section {
+    padding: 80px 0;
+  }
+}
+
+@media (min-width: 960px) {
+  .hero {
+    padding: 40px 0 80px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 5fr 6fr;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

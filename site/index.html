@@ -3,30 +3,249 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>高見舎 | 配電盤上部確認ロボット</title>
-  <meta name="description" content="配電盤上部を確認するロボットを開発する高見舎プロジェクトの紹介サイトです。">
+  <title>高見舎 TAKA-MEER | 配電盤の上を確かめるロボット</title>
+  <meta name="description" content="配電盤の立会試験で、脚立に登らずに盤の上面を確認できるロボット。沼津高専 電子制御工学科 MIRS2602 のプロジェクトです。">
+  <meta property="og:title" content="高見舎 TAKA-MEER">
+  <meta property="og:description" content="配電盤の上を、脚立に登らずに確かめるロボット。">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container">
-      <a class="logo" href="./">高見舎</a>
+      <a class="logo" href="./">高見舎 <span lang="en">TAKA-MEER</span></a>
     </div>
   </header>
 
   <main>
     <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <h1><ruby>高見舎<rt>タカミヤ</rt></ruby></h1>
+          <p class="hero-en" lang="en">TAKA-MEER</p>
+          <p class="hero-lead">配電盤の上を、<br>脚立に登らずに確かめるロボット。</p>
+          <p class="hero-sub">沼津高専 電子制御工学科 MIRS2602 のプロジェクトです。</p>
+        </div>
+
+        <figure class="hero-figure">
+          <svg class="drawing" viewBox="0 -40 560 330" role="img" aria-labelledby="drawing-title">
+            <title id="drawing-title">高さ2.3mの配電盤の横で、脚立に乗った人と、カメラを盤の上まで持ち上げたロボットを並べた図</title>
+
+            <!-- 寸法線 -->
+            <g class="dim">
+              <line x1="20" y1="40" x2="176" y2="40" class="dim-ext"/>
+              <line x1="34" y1="44" x2="34" y2="266"/>
+              <path d="M34 40 l-5 10 h10 z M34 270 l-5 -10 h10 z" class="dim-arrow"/>
+              <text x="44" y="162" class="dim-label">2.3 m</text>
+            </g>
+
+            <!-- 脚立と人 -->
+            <g class="danger">
+              <g class="ladder">
+                <line x1="84" y1="270" x2="114" y2="190"/>
+                <line x1="166" y1="270" x2="140" y2="190"/>
+                <line x1="93" y1="246" x2="157" y2="246"/>
+                <line x1="102" y1="220" x2="150" y2="220"/>
+                <line x1="108" y1="190" x2="146" y2="190"/>
+              </g>
+              <circle cx="127" cy="46" r="11" class="fill-bg"/>
+              <line x1="127" y1="58" x2="127" y2="124"/>
+              <line x1="127" y1="124" x2="117" y2="187"/>
+              <line x1="127" y1="124" x2="137" y2="187"/>
+              <line x1="127" y1="74" x2="162" y2="60"/>
+              <line x1="127" y1="74" x2="104" y2="104"/>
+            </g>
+
+            <!-- 配電盤 -->
+            <g class="panel">
+              <rect x="180" y="40" width="80" height="230"/>
+              <rect x="260" y="40" width="80" height="230"/>
+              <rect x="192" y="52" width="40" height="12" class="plate"/>
+              <rect x="272" y="52" width="40" height="12" class="plate"/>
+              <circle cx="200" cy="80" r="4" class="lamp-red"/>
+              <circle cx="214" cy="80" r="4" class="lamp-green"/>
+              <circle cx="280" cy="80" r="4" class="lamp-red"/>
+              <circle cx="294" cy="80" r="4" class="lamp-green"/>
+              <rect x="248" y="140" width="5" height="26" class="handle"/>
+              <rect x="328" y="140" width="5" height="26" class="handle"/>
+              <path d="M192 236 h56 M192 244 h56 M192 252 h56 M272 236 h56 M272 244 h56 M272 252 h56" class="louver"/>
+            </g>
+
+            <!-- 盤の上面にある機器（確認したい場所） -->
+            <g class="top-equip">
+              <rect x="196" y="24" width="38" height="16"/>
+              <rect x="276" y="16" width="46" height="24"/>
+              <path d="M234 32 C 252 32, 258 26, 276 26"/>
+            </g>
+            <rect x="184" y="6" width="152" height="38" rx="4" class="target"/>
+
+            <!-- ロボット：マストの上段とカメラ（読み込み時に伸びる） -->
+            <g class="safe">
+              <g class="lift">
+                <rect x="416" y="-2" width="8" height="120" class="mast-upper"/>
+                <rect x="406" y="-16" width="30" height="16" rx="2" class="camera"/>
+                <circle cx="404" cy="-8" r="5" class="lens"/>
+                <polygon points="400,-6 190,12 330,46" class="cone"/>
+              </g>
+              <rect x="412" y="104" width="16" height="112" class="mast-lower"/>
+              <rect x="380" y="212" width="80" height="26" rx="3" class="body"/>
+              <rect x="370" y="236" width="100" height="34" rx="17" class="track"/>
+              <circle cx="387" cy="253" r="10" class="wheel"/>
+              <circle cx="453" cy="253" r="10" class="wheel"/>
+              <circle cx="420" cy="253" r="6" class="wheel"/>
+            </g>
+
+            <line x1="0" y1="270" x2="560" y2="270" class="floor"/>
+          </svg>
+          <figcaption>
+            <span class="key key-danger">今：脚立に登って目で見る</span>
+            <span class="key key-safe">これから：カメラを持ち上げて画面で見る</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="problem">
+      <div class="container prose">
+        <h2>高さ2.3mの盤の上を、脚立で確かめている</h2>
+        <p>
+          配電盤は、工場で組み立てたあと出荷前に、お客様が立ち会って確認する「立会試験」を受けます。
+          盤の上面にある機器や配線を見るには、高さ約2.3mの盤の横に脚立を立てて登るしかありません。
+        </p>
+        <p>
+          立ち会うお客様には年配の方もいます。脚立からの転落は、大きなけがにつながります。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="solution">
       <div class="container">
-        <h1>高見舎</h1>
-        <p>配電盤上部確認用ロボットの開発プロジェクト</p>
-        <p class="note">サイトは現在準備中です。</p>
+        <div class="prose">
+          <h2>ロボットがカメラを持ち上げ、手元の画面で見る</h2>
+          <p>
+            脚立の代わりに、ロボットが盤の前まで移動し、昇降機でカメラを盤の上まで持ち上げます。
+            確認する人は床に立ったまま、タブレットに映る映像で盤の上面を見られます。
+          </p>
+        </div>
+        <ol class="steps">
+          <li>
+            <h3>盤の前まで走る</h3>
+            <p>走行部が保管場所から試験場へ移動し、盤の前で止まります。</p>
+          </li>
+          <li>
+            <h3>カメラを上げる</h3>
+            <p>映像を見ながら昇降機を上げ、ちょうどよい高さで止めます。天井に近づくと自動で止まります。</p>
+          </li>
+          <li>
+            <h3>向きを合わせて見る</h3>
+            <p>カメラを左右・上下に動かし、拡大して盤の上面を確認します。</p>
+          </li>
+          <li>
+            <h3>下げて次の盤へ</h3>
+            <p>カメラを下げてから、次の盤へ移動します。</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-panel" id="system">
+      <div class="container">
+        <div class="prose">
+          <h2>走る部分と、見る部分</h2>
+          <p>
+            機体は2つのシステムでできています。互いに通信しない独立した作りにして、片方の変更がもう片方に影響しないようにしました。
+            非常停止ボタンは電源を共有しているので、押すと両方が止まります。
+          </p>
+        </div>
+
+        <div class="systems">
+          <article class="system">
+            <h3>走行部 <span class="code-name" lang="en">th-system</span></h3>
+            <p>
+              クローラー型の車体が、LiDARで周囲を測りながら移動します。
+              一度人が操作して走らせた経路を記録し、同じ経路を自分でたどれます（教示再生）。
+              人の脚を検知して後をついていく追従機能も開発しています。
+            </p>
+            <dl class="spec">
+              <dt>車体</dt><dd>CuGoV3（クローラー）</dd>
+              <dt>周囲の計測</dt><dd>2D-LiDAR RPLIDAR S1（全周360°）</dd>
+              <dt>制御</dt><dd>ESP32、Raspberry Pi 4、PC（ROS 2）</dd>
+              <dt>操作</dt><dd>タブレット・PCのブラウザ</dd>
+            </dl>
+            <a class="repo" href="https://github.com/TAKA-MEER/th-system">ソースコードを見る（GitHub）</a>
+          </article>
+
+          <article class="system">
+            <h3>昇降・カメラ <span class="code-name" lang="en">hve-system</span></h3>
+            <p>
+              パワーウィンドウ用のモーターで昇降機を動かし、先端のカメラを盤の上まで持ち上げます。
+              カメラは左右と上下に向きを変えられます。
+              高さは事前に登録せず、操作する人が映像を見て決めます。
+            </p>
+            <dl class="spec">
+              <dt>昇降</dt><dd>パワーウィンドウモーター、ESP32</dd>
+              <dt>高さの計測</dt><dd>超音波距離計（昇降の高さ、天井までの距離）</dd>
+              <dt>カメラ部</dt><dd>Raspberry Pi 4、ステッピングモーター（左右）、サーボモーター（上下）</dd>
+              <dt>操作</dt><dd>ブラウザ</dd>
+            </dl>
+            <a class="repo" href="https://github.com/TAKA-MEER/hve-system">ソースコードを見る（GitHub）</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="safety">
+      <div class="container prose">
+        <h2>何よりも先に、ぶつからないこと</h2>
+        <p>
+          試験場には出荷前の製品が並んでいます。
+          そのため「人や物への接触0件、意図しない動き0件」を、ほかのどの目標よりも優先しています。
+        </p>
+        <ul class="checks">
+          <li>動作の切り替えはすべて人の操作で行い、誰も押していないのに動き出すことがないようにする</li>
+          <li>異常を検知したらモーターの出力をすぐにゼロにする。通信が途絶えても、遅くとも0.6秒で止まる</li>
+          <li>画面の非常停止ボタンは、ほかの表示に隠れない位置に常に出しておく</li>
+          <li>昇降機は上端と天井の手前で自動的に止まる</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="history">
+      <div class="container prose">
+        <h2>これまでの歩み</h2>
+        <ol class="timeline">
+          <li><span class="date">2026年4月</span>チーム結成、役割分担</li>
+          <li><span class="date">5月</span>工場見学を経て、立会試験を支援するロボットに取り組むことを決める</li>
+          <li><span class="date">6月</span>プロジェクト名を「高見舎」に決定</li>
+          <li><span class="date">7月</span>テーマ発表</li>
+          <li><span class="date">8〜9月</span>走行部・昇降機・カメラそれぞれの概念実証（PoC）</li>
+          <li><span class="date">10月</span>機体全体の設計</li>
+          <li class="upcoming"><span class="date">12月12日</span>学内発表</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container prose">
+        <h2>MIRSについて</h2>
+        <p>
+          MIRSは、沼津工業高等専門学校 電子制御工学科で行っているチームでのシステム開発教育プログラム（PBL）です。
+          高見舎は、2026年度のチーム MIRS2602 のプロジェクトです。
+        </p>
+        <p class="credit">
+          音声アナウンスの音声合成に <a href="https://voicevox.hiroshiba.jp/nemo/">VOICEVOX Nemo</a> を使用しています。
+        </p>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <small>&copy; 2026 高見舎プロジェクト</small>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
     </div>
   </footer>
 </body>
