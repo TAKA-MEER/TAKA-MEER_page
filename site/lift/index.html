@@ -58,6 +58,29 @@
       </div>
     </section>
 
+    <section class="section" id="model">
+      <div class="container">
+        <div class="prose">
+          <h2>昇降機を動かしてみる</h2>
+          <p>昇降機は2段に分かれていて、それぞれ約1m伸びます。ドラッグで視点を回し、スライダーで昇降機を上下できます。</p>
+        </div>
+        <figure class="viewer" data-lift-viewer>
+          <div class="viewer-stage">
+            <canvas aria-label="昇降機の3Dモデル。ドラッグで視点を回転、ピンチで拡大縮小できます"></canvas>
+            <p class="viewer-readout" aria-live="polite">高さ <b data-height>-</b> m<span>（伸び <span data-travel>0.0</span> m）</span></p>
+            <p class="viewer-status">読み込み中…</p>
+          </div>
+          <div class="viewer-controls">
+            <label for="lift-range">昇降</label>
+            <input type="range" id="lift-range" min="0" max="100" value="0">
+            <button type="button">上げる</button>
+          </div>
+          <figcaption class="note">開発中の CAD モデル（<span data-model-date>2026年10月</span>時点）で、形は今後変わります。半透明の枠は高さ約3mの配電盤の目安です。</figcaption>
+          <p class="viewer-fallback note">お使いのブラウザでは3D表示ができませんでした。</p>
+        </figure>
+      </div>
+    </section>
+
     <section class="section" id="height">
       <div class="container prose">
         <h2>高さは、映像を見て人が決める</h2>
@@ -123,5 +146,15 @@
       <small>&copy; 2026 高見舎（MIRS2602）</small>
     </div>
   </footer>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../assets/js/vendor/three/three.module.min.js",
+        "three/addons/": "../assets/js/vendor/three/addons/"
+      }
+    }
+  </script>
+  <script type="module" src="../assets/js/lift-viewer.js"></script>
 </body>
 </html>

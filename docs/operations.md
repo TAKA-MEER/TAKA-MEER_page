@@ -95,3 +95,26 @@ docs/                  運用ドキュメント
 - 開発進捗セクションの更新（目安：マイルストーンごと）
 - リンク切れの確認
 - 掲載情報が古くなっていないか（メンバー、所属、連絡先）
+
+## 外部ライブラリ
+
+| ライブラリ | 用途 | 置き場所 | 導入 |
+|---|---|---|---|
+| three.js r160（MIT） | `lift/` の昇降機3Dビューア | `site/assets/js/vendor/three/` | 2026-10-17 承認 |
+
+- CDN ではなくリポジトリに同梱し（ビルド不要、importmap で読み込む）、外部サービスの停止に左右されないようにしている
+- 使っている addons は `controls/OrbitControls.js`、`loaders/GLTFLoader.js`、`utils/BufferGeometryUtils.js`（GLTFLoader が使う）
+
+## 3Dモデル（CAD からの書き出し）
+
+`lift/` の3Dビューアは `site/assets/models/robot.glb` を表示する。CAD を更新したら Windows で書き出し直す。
+
+```
+python tools/cad/export_robot_glb.py "<CADdata>/統合設計/統合設計.SLDASM"
+```
+
+- SolidWorks でアセンブリを読み取り専用で開き、glb を書き出して軽量化する（約15MB → 約1MB）。CAD ファイルは変更しない
+- 昇降の可動部は `tools/cad/export_robot_glb.py` の `STAGES`（どの部品が1段目・2段目か）と `TRAVEL`（各段の伸び）で決まる。昇降機の部品構成を変えたらここを直す。当たらないパターンがあると注意が出る
+- ページの「〇年〇月時点」は書き出した日付から自動で入る
+- 3Dモデルは画像より設計の情報量が多い。公開してよい範囲か（「公開してよい情報の基準」）を書き出しのたびに確認する
+- 必要なもの：Python 3、pywin32、numpy

@@ -811,3 +811,133 @@ figcaption {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* 3Dビューア（lift/）。JS が動いて初めて操作部を出し、動かなければ案内文だけを出す */
+.viewer {
+  margin: 24px 0 0;
+  max-width: 46em;
+}
+
+.viewer-stage,
+.viewer-controls {
+  display: none;
+}
+
+.viewer.is-ready .viewer-stage {
+  display: block;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--panel-soft);
+}
+
+.viewer.is-ready .viewer-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* 図の凡例用の figcaption（flex）ではなく、ふつうの文として流す */
+.viewer figcaption {
+  display: block;
+  margin-top: 12px;
+}
+
+.viewer.is-ready .viewer-fallback {
+  display: none;
+}
+
+.viewer canvas {
+  display: block;
+  width: 100%;
+  height: min(70vh, 460px);
+  touch-action: none;
+  cursor: grab;
+}
+
+.viewer canvas:active {
+  cursor: grabbing;
+}
+
+.viewer-readout {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.viewer-readout > span {
+  font-size: 0.8125rem;
+}
+
+/* 読み込み中・失敗の表示 */
+.viewer-status {
+  display: none;
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  place-content: center;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.viewer.is-loading .viewer-status {
+  display: grid;
+}
+
+.viewer.is-failed .viewer-status {
+  display: grid;
+  font-size: 0;
+}
+
+.viewer.is-failed .viewer-status::after {
+  content: "3Dモデルを読み込めませんでした";
+  font-size: 0.875rem;
+}
+
+.viewer-readout b {
+  font-family: var(--font-num);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.viewer-controls label {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.viewer-controls input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--safe);
+}
+
+.viewer-controls button {
+  min-width: 5.5em;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--safe);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.viewer-controls button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.viewer-controls button:hover:not(:disabled) {
+  background: var(--safe);
+  color: var(--paper);
+}
