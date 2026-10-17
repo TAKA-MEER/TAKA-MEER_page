@@ -16,3 +16,4 @@ desktop.ini
 *.sldprt
 *.sldasm
 *.slddrw
+__pycache__/

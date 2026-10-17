@@ -54,6 +54,7 @@ OUT_DEFAULT = os.path.join(os.path.dirname(__file__), "..", "..", "site", "asset
 # ---- SolidWorks ----
 
 def export_from_solidworks(asm_path, glb_path):
+    import pythoncom
     import win32com.client
 
     sw = win32com.client.Dispatch("SldWorks.Application")
@@ -63,15 +64,16 @@ def export_from_solidworks(asm_path, glb_path):
     doc = sw.OpenDoc6(asm_path, 2, 3, "", errors, warnings)
     if doc is None:
         sys.exit(f"アセンブリを開けません: {asm_path}（エラー {errors.value}）")
-    doc.ForceRebuild3(False)
 
     root = doc.ConfigurationManager.ActiveConfiguration.GetRootComponent3(True)
     tree = component_tree(root)
 
+    # 古い doc.SaveAs3 では、ミラー部品（片側のクローラー）の形状が空で書き出されるため Extension.SaveAs3 を使う
     # swSaveAsOptions_Silent | Copy = 1 | 2
-    err = doc.SaveAs3(glb_path, 0, 3)
-    if err != 0 or not os.path.exists(glb_path):
-        sys.exit(f"glb の書き出しに失敗しました（エラー {err}）")
+    nothing = win32com.client.VARIANT(pythoncom.VT_DISPATCH, None)
+    ok = doc.Extension.SaveAs3(glb_path, 0, 3, nothing, nothing, errors, warnings)
+    if not ok or not os.path.exists(glb_path):
+        sys.exit(f"glb の書き出しに失敗しました（エラー {errors.value}）")
     return tree
 
 
@@ -181,8 +183,11 @@ def classify(gltf, tree):
                     if fnmatch.fnmatchcase(name, p):
                         hits[p] += 1
             matrix = parent_matrix @ node_matrix(child)
-            if "mesh" in child and gltf["meshes"][child["mesh"]]["primitives"]:
-                result.append((matrix, child["mesh"], group, name))
+            if "mesh" in child:
+                if gltf["meshes"][child["mesh"]]["primitives"]:
+                    result.append((matrix, child["mesh"], group, name))
+                else:
+                    print(f"注意: {name} の形状が空で書き出されました（3D表示に出ません）", file=sys.stderr)
             walk(child_index, sub, matrix, group)
 
     walk(roots[0], tree, node_matrix(nodes[roots[0]]), "base")
