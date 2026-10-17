@@ -2,7 +2,8 @@
   色の由来
   --panel : 配電盤の標準塗装色 マンセル 5Y7/1
   --danger: 表示灯の赤（脚立の危険）
-  --safe  : 表示灯の緑（ロボットによる安全）
+  --safe  : 表示灯の緑（ロボットによる安全）。図解の中だけで使う
+  --accent: サイトのメインカラー（リンク・ボタン・見出しまわり）
 */
 :root {
   --paper: #f3f4f1;
@@ -13,6 +14,7 @@
   --line: #b3b3a6;
   --danger: #c2362b;
   --safe: #1f7d55;
+  --accent: #1f5fa8;
 
   --font-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", sans-serif;
   --font-num: "Barlow Condensed", "BIZ UDPGothic", sans-serif;
@@ -28,6 +30,7 @@
     --line: #3d464d;
     --danger: #f0705f;
     --safe: #4cc38a;
+    --accent: #6aa5ec;
   }
 }
 
@@ -54,17 +57,17 @@ body {
 
 a {
   color: inherit;
-  text-decoration-color: var(--safe);
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
 }
 
 a:hover {
-  color: var(--safe);
+  color: var(--accent);
 }
 
 :focus-visible {
-  outline: 3px solid var(--safe);
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -124,8 +127,8 @@ h1, h2, h3 {
 }
 
 .lamps i.on {
-  background: var(--safe);
-  border-color: var(--safe);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 /* パンくず */
@@ -215,7 +218,7 @@ h1, h2, h3 {
   font-weight: 600;
   font-size: 2.6rem;
   line-height: 1;
-  color: var(--safe);
+  color: var(--accent);
 }
 
 .functions strong {
@@ -231,13 +234,13 @@ h1, h2, h3 {
   font-size: 0.9375rem;
   font-weight: 700;
   text-decoration: underline;
-  text-decoration-color: var(--safe);
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
 }
 
 .functions a:hover strong {
-  color: var(--safe);
+  color: var(--accent);
 }
 
 /* 次の階層へ */
@@ -254,7 +257,7 @@ h1, h2, h3 {
 }
 
 .deeper:hover {
-  border-color: var(--safe);
+  border-color: var(--accent);
 }
 
 .deeper .lamps i {
@@ -339,7 +342,7 @@ code {
 .flow li {
   position: relative;
   padding: 10px 0 10px 16px;
-  border-left: 3px solid var(--safe);
+  border-left: 3px solid var(--accent);
 }
 
 .flow li + li {
@@ -352,7 +355,7 @@ code {
   left: -9px;
   top: -14px;
   border: 7px solid transparent;
-  border-top-color: var(--safe);
+  border-top-color: var(--accent);
   border-bottom: 0;
 }
 
@@ -380,7 +383,7 @@ code {
 }
 
 .compare div.better {
-  border-top-color: var(--safe);
+  border-top-color: var(--accent);
 }
 
 .compare dl {
@@ -642,7 +645,7 @@ figcaption {
   font-weight: 600;
   font-size: 2.6rem;
   line-height: 1;
-  color: var(--safe);
+  color: var(--accent);
 }
 
 .steps h3 {
@@ -721,7 +724,7 @@ figcaption {
   width: 0.75em;
   height: 0.75em;
   border-radius: 50%;
-  background: var(--safe);
+  background: var(--accent);
 }
 
 /* 歩み */
@@ -750,7 +753,7 @@ figcaption {
 
 .timeline .upcoming::before {
   background: var(--paper);
-  border: 2px solid var(--safe);
+  border: 2px solid var(--accent);
 }
 
 .date {
@@ -916,14 +919,14 @@ figcaption {
 .viewer-controls input {
   flex: 1;
   min-width: 0;
-  accent-color: var(--safe);
+  accent-color: var(--accent);
 }
 
 .viewer-controls button {
   min-width: 5.5em;
   min-height: 44px;
   padding: 0 16px;
-  border: 1.5px solid var(--safe);
+  border: 1.5px solid var(--accent);
   border-radius: 6px;
   background: transparent;
   color: var(--ink);
@@ -938,6 +941,6 @@ figcaption {
 }
 
 .viewer-controls button:hover:not(:disabled) {
-  background: var(--safe);
+  background: var(--accent);
   color: var(--paper);
 }
