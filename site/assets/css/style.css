@@ -961,3 +961,50 @@ figcaption {
   background: var(--accent);
   color: var(--paper);
 }
+
+/* 解析結果などの図（strength.html）。スマホでは縦に並べ、PC では2枚を横に並べる */
+.figure-pair {
+  display: grid;
+  gap: 24px;
+  margin: 24px 0 8px;
+}
+
+@media (min-width: 640px) {
+  .figure-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.figure-pair figure,
+.figure-wide {
+  margin: 0;
+}
+
+.figure-wide {
+  margin: 24px 0;
+  max-width: 46em;
+}
+
+.figure-pair img,
+.figure-wide img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.figure-pair figcaption,
+.figure-wide figcaption {
+  display: block;
+}
+
+/* 文章の多い手順は PC でも1列に並べる（strength.html、development.html） */
+.steps.stack {
+  grid-template-columns: 1fr;
+  max-width: 40em;
+}
+
+/* 本文の途中に置いた「次の階層へ」は、続く段落との間をあける */
+.prose > .deeper {
+  margin-bottom: 24px;
+}

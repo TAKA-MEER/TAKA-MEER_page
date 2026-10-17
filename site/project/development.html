@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ソフトウェアの開発の進め方 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="高見舎の AI エージェントを使ったソフトウェア開発の進め方。文書の役割分担、実装と検証の分担、テストの確かめ方、git の運用。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち3（技術詳細）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>技術詳細</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">プロジェクトについて</a></li><li aria-current="page">ソフトウェアの開発の進め方</li></ol></nav>
+        <h1>ソフトウェアの開発の進め方</h1>
+        <p class="lead">高見舎のソフトウェアは、AI エージェントにコードを書かせ、人と AI で確かめる体制で開発しています。少人数で安全にかかわるソフトウェアを作るために決めたルールをまとめます。</p>
+      </div>
+    </div>
+
+    <section class="section" id="overview">
+      <div class="container prose">
+        <h2>全体の考え方</h2>
+        <p>
+          コードを書く量そのものは AI に任せられます。その代わり、何を作るかを決めることと、できたものが本当に正しいかを確かめることに人の時間を使います。
+          走行部（th-system）でこの進め方を作り、昇降・カメラ（hve-system）も同じ体制にしています。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">役割</th><th scope="col">担当</th><th scope="col">やること</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">方針を決める</th><td>人</td><td>何を作るか、仕様をどう変えるかを決める。実機での試験と通電作業</td></tr>
+              <tr><th scope="row">実装管理</th><td>人 ＋ Claude（Claude Code）</td><td>設計書から作業単位ごとの指示書を書く。できたものを検査する。ブランチ・マージ・公開（push）を受け持つ</td></tr>
+              <tr><th scope="row">実装</th><td>AI エージェント（opencode）</td><td>指示書を読み、前提に誤りがあれば指摘し、無ければ実装とテストを書いて作業ブランチにコミットする</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">
+          2026年10月時点で、th-system の約1,400のコミットのうち約950、hve-system の137のうち59が、Claude との共同作業として記録されています（実装エージェントだけのコミットは含みません）。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="documents">
+      <div class="container prose">
+        <h2>文書を先に直す</h2>
+        <p>
+          AI に正しく作らせるには、「何が正しいか」が1か所に書かれている必要があります。
+          そこで文書ごとに役割を分け、方針を変えるときはコードより先に仕様を直すことにしています。
+          仕様とコードが食い違ったら、どちらが正かを人に確認してから進めます。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">文書</th><th scope="col">書くこと</th><th scope="col">書かないこと</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">完全設計書（仕様）</th><td>完成形が何をどう振る舞うべきか、どういう値が要るか。<strong>ここが正本</strong></td><td>ノード名・ファイル構成・アルゴリズムなどの実装の話</td></tr>
+              <tr><th scope="row">詳細設計書</th><td>どう実装するか。ノード名・トピック名・作業単位の切り方</td><td>—</td></tr>
+              <tr><th scope="row">実装計画</th><td>何をどの順に作るか、どこまで進んだか</td><td>—</td></tr>
+              <tr><th scope="row">現状の実装の説明</th><td>いまのコードがどうなっているか</td><td>仕様と食い違ったら仕様が優先。実装を追いつかせる</td></tr>
+              <tr><th scope="row">検討メモ</th><td>比較・たたき台</td><td>仕様を上書きしない。結論が出たら仕様に移す</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          文書の本体には結論と表だけを置き、根拠や比較の詳細は別ファイルに分けます。
+          読み返す人（と AI）が、スクロールせずに結論をつかめる分量を保つためです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="agents">
+      <div class="container prose">
+        <h2>実装を AI エージェントに任せる</h2>
+        <ol class="flow">
+          <li><strong>指示書を書く</strong><span>1つの作業単位につき1つの指示書。詳細設計書の該当部分と、合格の条件を書く</span></li>
+          <li><strong>ブランチを切って渡す</strong><span>1つの作業単位につき1本のブランチ。並行させるときは作業フォルダごと分ける（git worktree）</span></li>
+          <li><strong>エージェントが実装してコミットする</strong><span>利用枠の上限で途中で止まる前提で、コミットを細かく切らせる。公開（push）はさせない</span></li>
+          <li><strong>実装管理担当が検査する</strong><span>下の「テストを信用しない」の手順で確かめる</span></li>
+          <li><strong>マージして計画書を直す</strong><span>マージしたその場で、実装計画の進み具合を書き換える</span></li>
+        </ol>
+        <p>
+          作る順番は、設計書の段階の番号ではなく、実際の運用で先に要るものから決めています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="verify">
+      <div class="container prose">
+        <h2>テストを信用しない</h2>
+        <p>
+          実装は AI に任せてよいが、テストは信用しない、というのがこの体制のいちばん大事なルールです。
+          実際に、通るだけで何も検出しないテストが何度も出てきました。
+          たとえば、画面から機体へ指令を送る処理を壊しても、関係するテストがすべて通ってしまったことがあります。
+        </p>
+        <ol class="steps stack">
+          <li><h3>テストを自分で回す</h3><p>エージェントの「テストが通った」という報告は使わず、検査する側が自分の環境で実行する。</p></li>
+          <li><h3>わざと壊して確かめる（変異チェック）</h3><p>実装の一部をわざと壊し、テストが失敗するかを見る。少なくとも1〜2か所は自分でやる。失敗しなければ、そのテストは何も守っていない。</p></li>
+          <li><h3>本番の経路を縛っているかを見る</h3><p>部品単体のテストが固くても、それを呼び出す数行が壊れていれば意味がない。安全にかかわるところは、実際にプログラムを起動して振る舞いを確かめる。</p></li>
+          <li><h3>差分が指示の範囲内かを見る</h3><p>頼んでいない変更が混ざっていないかを目で確かめる。</p></li>
+        </ol>
+        <p>
+          走行部のいちばん上の目標「人・物への接触0件、意図しない挙動0件」は、回数を数えるのではなく、センサーの停止や通信断などの故障をわざと起こして（故障注入）確かめることにしています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="container prose">
+        <h2>「完了」と書かない</h2>
+        <p>
+          AI も人も「できたと思う」で先に進みがちです。そこで進み具合は「完了」ではなく、何を根拠にそう言えるかで書きます。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">書き方</th><th scope="col">意味</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">実機確認済み</th><td>通電した実機で動作を見た。試験記録に残っている</td></tr>
+              <tr><th scope="row">配線済み</th><td>起動の設定に組み込まれていて、自動のテストがある</td></tr>
+              <tr><th scope="row">実装あり・未配線</th><td>ファイルはあるが、まだ起動されない</td></tr>
+              <tr><th scope="row">未着手</th><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          「配線済み・実機未確認」になったものは、実機で確かめる項目の一覧に1行足し、確かめたら消します。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="devmode">
+      <div class="container prose">
+        <h2>機器が揃っていなくても確かめる</h2>
+        <p>
+          実機・Raspberry Pi・ESP32 のどれかが無いと起動確認で止まってしまうため、確かめたい項目だけ安全確認を外せる「開発モード」を用意しています。
+          AI エージェントも画面を開かずに使えます。
+        </p>
+        <ul class="checks">
+          <li>開発モードにしただけでは何も外れない。外す項目（疎通確認、LiDAR の異常検知など）を1つずつ明示する</li>
+          <li>物理の非常停止ボタン、ESP32 のウォッチドッグ、画面の非常停止は開発モードでも効く</li>
+          <li>開発モードで通した結果を、通常の結果と取り違えない</li>
+        </ul>
+        <p>
+          モーターの電源だけを切って PC につなげば、モードの切り替え、画面の操作、異常を検知するまでの時間の測定までは通電せずに確かめられます。
+          通電が要るのは、ブレーキの距離や物理の非常停止など、実際に走らせる確認だけです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="git">
+      <div class="container prose">
+        <h2>履歴を追えるようにする</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">ブランチ</th><td><code>&lt;種別&gt;/&lt;主題&gt;</code> の名前で、1つの作業単位に1本。混ぜると片方だけ差し戻せなくなる</td></tr>
+              <tr><th scope="row">マージ</th><td>作業の単位が履歴に残るようにマージコミットを作り、まとめて1つにする（squash）ことはしない。設計文書がコミットを名指しで参照しているため</td></tr>
+              <tr><th scope="row">マージの記録</th><td>マージの説明に、検査の結果を数字で書く（例：通ったテストの件数）。何を根拠にマージしたかを後から追えるようにする</td></tr>
+              <tr><th scope="row">文書だけの修正</th><td>main へ直接コミットしてよい。コードを含むものは必ずブランチを切る</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="outside">
+      <div class="container prose">
+        <h2>専門外の分野にも使う</h2>
+        <p>
+          チームは電子制御工学科で、構造の強度計算は専門外です。
+          昇降機のプーリーを支える3Dプリント部品が壊れないかは、Claude Code に SOLIDWORKS Simulation を操作させて解析しました。
+          力のかかり方の見積もり、支え方を甘め・厳しめの2通りにした計算、角に丸みを付けた場合の比較までを AI が行い、前提と限界を明記したレポートにまとめています。
+          ドラムの位置が変わったときは、CAD からロープの角度を測り直して計算をやり直しました。
+        </p>
+        <p>
+          自分たちだけでは計算の細部の正しさを判断しきれないため、レポートでは材料の強さを控えめに仮定し、推定にとどまる値（ロープの張力など）と計算の限界を明記しています。
+          結論も数値だけでなく、「どこが弱いか」「何をすれば強くなるか」が分かる形にまとめています。
+        </p>
+        <a class="deeper" href="../lift/strength.html">
+          <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          <span><strong>プーリー固定具の強度検証へ</strong><span>かかる力の見積もり、計算結果、安全率、対策</span></span>
+        </a>
+        <p>
+          このサイトの昇降機の3Dモデルも、SOLIDWORKS の設計データから書き出すスクリプトを AI と作り、設計が変わるたびに書き出し直しています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <div class="container prose">
+        <h2>出典</h2>
+        <p>
+          ここに書いた進め方は、各リポジトリの <code>CLAUDE.md</code> と <code>docs/plan/ImplementationPlan.md</code> にまとめてあります。
+        </p>
+        <ul class="siblings">
+          <li><a href="https://github.com/TAKA-MEER/th-system">th-system</a></li>
+          <li><a href="https://github.com/TAKA-MEER/hve-system">hve-system</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかの技術詳細</h2>
+        <ul class="siblings"><li><a href="../move/tech.html">走行部の技術詳細</a></li><li><a href="../lift/tech.html">昇降・カメラの技術詳細</a></li><li><a href="../records/tech.html">資料作成の技術詳細</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

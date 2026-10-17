@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>プーリー固定具の強度検証 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="昇降機のロープの向きを変えるプーリーを支える3Dプリント部品が壊れないかを、SOLIDWORKS Simulation で確かめた結果。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち3（技術詳細）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>技術詳細</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">盤の上を見る</a></li><li aria-current="page">プーリー固定具の強度検証</li></ol></nav>
+        <h1>プーリー固定具の強度検証</h1>
+        <p class="lead">昇降機を引き上げるロープの向きを変える部品が、3Dプリンタで作っても壊れないかを、コンピュータ上の強度計算で確かめました。</p>
+      </div>
+    </div>
+
+    <section class="section" id="summary">
+      <div class="container prose">
+        <h2>結論</h2>
+        <ul class="checks">
+          <li>材料を半分以下に減らした形（体積は元の約47%）でも、強さは元の形とほぼ同じ。応力の差は5〜15%程度</li>
+          <li>ふつうに昇降させる程度の力なら、充填率15%の3Dプリントのままで足りる（安全率 約3.4〜4.4）</li>
+          <li>ただし、巻き上げの端でモーターが止まらずに引き続ける（ストール）と、どちらの形でも壊れる計算になる。リミットスイッチや電流の制限でモーターを止める仕組みが要る</li>
+        </ul>
+        <p>
+          構造の強度計算はチームの専門外です。そこで、AI の Claude Code に SOLIDWORKS Simulation を操作させて解析し、前提と限界も含めてレポートにまとめました
+          （進め方は<a href="../project/development.html#outside">開発の進め方</a>）。
+          このページはそのレポートの第4版（2026年10月17日、巻き取りドラムの位置変更に合わせて再計算したもの）の要約です。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="load">
+      <div class="container prose">
+        <h2>部品の役割と、かかる力</h2>
+        <p>
+          昇降機を持ち上げるロープは、モーターで回す巻き取りドラム（塩ビ管）から出て、小さなプーリー（滑車）で向きを変え、レールに沿って真上へ向かいます。
+          このプーリーを機体のアルミフレームに取り付けているのが「プーリー固定具」で、PLA を充填率15%で3Dプリントして作る予定です。
+        </p>
+        <p>
+          ロープはドラムの下側から出てほぼ水平にプーリーへ入り、真上へ曲がります。
+          そのためプーリーは、ロープの張力 T の約1.42倍の力で斜め上（ドラム側）へ引っぱられます。
+          この力がプーリーの軸（M5 ボルト）を通して、固定具の2枚の「耳」にかかります。
+        </p>
+        <figure class="system-figure">
+          <a href="../assets/img/pulley-rope-path.png"><img src="../assets/img/pulley-rope-path.png" width="960" height="744" loading="lazy" alt="横から見たロープの通り道の模式図。左に昇降機のレール、その根元のアルミフレームの上にプーリー固定具。右に136mm離れて巻き取りドラムがあり、中心はプーリーより26mm高い。ロープはドラムの下側から出てほぼ水平にプーリーへ入り、真上へ曲がって昇降機を持ち上げる。プーリーはロープ張力Tの約1.42倍の力で斜め上・ドラム側へ引かれる。点線は30mm上にあった旧位置のドラム。"></a>
+          <figcaption>横から見たロープの通り道（寸法は CAD から。点線は変更前のドラムの位置）</figcaption>
+        </figure>
+
+        <h3>ロープの張力の見積もり</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">場合</th><th scope="col">考え方</th><th scope="col">ロープ1本の張力</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">通常の昇降</th><td>動く部分 約3.25kg（CAD から）＋荷物 0.5kg ＝ 約37N をロープ2本で分担し、動き始めの勢いぶんを1.5倍</td><td class="num">約28N</td></tr>
+              <tr><th scope="row">片側のロープに全荷重</th><td>2本の張りがそろわず、片方だけで全部を支えた場合（×1.5）</td><td class="num">約55N</td></tr>
+              <tr><th scope="row">モーター拘束（ストール）</th><td>巻き上げの端で止まらず、モーターが全力で引き続けた場合。トルク10N·m、ドラム半径30mm、ロープ2本と仮定</td><td class="num">約167N</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">モーターの最大トルクと、昇降機側の滑車による倍力の有無は未確認のため、推定値です。</p>
+      </div>
+    </section>
+
+    <section class="section" id="shapes">
+      <div class="container prose">
+        <h2>比べた2つの形</h2>
+        <p>
+          プーリーをはさむ2枚の耳と、フレーム側面に当たる壁の形は同じで、違うのはフレームへの取り付け部分（底）だけです。
+        </p>
+        <div class="figure-pair">
+          <figure>
+            <img src="../assets/img/pulley-original.jpg" width="792" height="676" loading="lazy" alt="元の形のプーリー固定具。フレームを上から抱え込む箱形の底に、プーリーをはさむL字の耳が2枚立っている。">
+            <figcaption>元の形：フレームを上から抱え込む。M5 ボルト4本で固定、体積 42,381mm³</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/img/pulley-light.jpg" width="800" height="647" loading="lazy" alt="検証用の軽い形のプーリー固定具。L字に曲げた1枚の板に、プーリーをはさむL字の耳が2枚立っている。">
+            <figcaption>検証用：L字の板＋耳2枚。M5 ボルト2本で固定、体積 19,898mm³（元の約47%）</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="container prose">
+        <h2>計算の方法</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">解析</th><td>SOLIDWORKS Simulation 2026 の線形静解析。部品を約7万〜20万個の要素に分けて計算する有限要素法（FEM）</td></tr>
+              <tr><th scope="row">荷重</th><td>ロープ張力 T＝100N のときの力（プーリーに142N、斜め上・ドラム側へ）を耳のボルト穴に加える。力と応力は比例するので、ほかの張力の場合は比例で換算する</td></tr>
+              <tr><th scope="row">支え方 A：接触あり</th><td>ボルト穴を固定し、フレームに当たる面も支える。現実に近いがやや甘め</td></tr>
+              <tr><th scope="row">支え方 B：ボルトのみ</th><td>ボルト穴だけで支える（フレームが無いのと同じ）。厳しめ（安全側）</td></tr>
+              <tr><th scope="row">材料</th><td>中まで詰まった PLA として計算し、その結果を「充填率15%で印刷した PLA の強さ」と比べる。強さは層に沿う向き 20MPa、層をはがす向き 10MPa と仮定（外周2周の一般的な設定を想定した控えめな値）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          本当の支え方は「ボルトで締めてフレームに押し付ける」ですが、計算で正確に再現しにくいため、甘めと厳しめの2通りで計算し、本当の値はその間に入ると考えます。
+        </p>
+        <p>
+          3Dプリンタは薄い層を積み重ねて作るので、層と層の境目をはがす向き（上下方向の応力 σz）の力に弱くなります。
+          そのため、全体の危なさを見るミーゼス相当応力に加えて、σz を別に調べました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="container prose">
+        <h2>計算結果</h2>
+        <figure class="figure-wide">
+          <a href="../assets/img/pulley-light-mises.jpg"><img src="../assets/img/pulley-light-mises.jpg" width="1130" height="670" loading="lazy" alt="検証用の形・支え方Aのミーゼス相当応力の分布図。ほぼ全体が青で余裕があり、壁の根元とボルト穴のまわりにわずかに色が付いている。"></a>
+          <figcaption>検証用の形・支え方 A のミーゼス相当応力。青いほど余裕があり、赤いほど力が集中している（目盛り 0〜15MPa）。最大は壁の根元、耳は約3MPa</figcaption>
+        </figure>
+        <p>
+          どちらの形でも、一番弱いのはフレームに当たる壁の根元の角（スロットの端）でした。
+          ここで層をはがす向きの力が集中するため、最初に割れる可能性が最も高い場所です。
+        </p>
+        <figure class="figure-wide">
+          <a href="../assets/img/pulley-light-sz-closeup.jpg"><img src="../assets/img/pulley-light-sz-closeup.jpg" width="1280" height="667" loading="lazy" alt="検証用の形・支え方Aの、層をはがす向きの応力σzの拡大図。全体は緑（ほぼ0）で、赤丸で囲んだ壁の根元の角2か所に黄色の細い線が出ている。"></a>
+          <figcaption>同じく、層をはがす向きの応力 σz の拡大。赤丸が一番弱い場所で、張力100N のとき約8MPa。角から2mm 離れると約3MPa まで下がる</figcaption>
+        </figure>
+
+        <h3>数値のまとめ（ロープ張力 T＝100N のとき）</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">場所・種類（MPa）</th><th scope="col">元 A</th><th scope="col">元 B</th><th scope="col">検証用 A</th><th scope="col">検証用 B</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">壁の根元の角 σz（一番厳しい）</th><td class="num">8.1</td><td class="num">9.9</td><td class="num">8.1</td><td class="num">10.4</td></tr>
+              <tr><th scope="row">角から2mm 離れた位置の σz</th><td class="num">2.7</td><td class="num">3.3</td><td class="num">2.9</td><td class="num">3.8</td></tr>
+              <tr><th scope="row">耳・壁の、層に沿う向きの最大応力</th><td class="num">3.5</td><td class="num">7.7</td><td class="num">3.8</td><td class="num">8.7</td></tr>
+              <tr><th scope="row">最大の変形量（mm）</th><td class="num">0.03</td><td class="num">0.36</td><td class="num">0.03</td><td class="num">0.42</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">
+          A＝接触あり（甘め）、B＝ボルトのみ（厳しめ）。ドラムの位置を変える前の配置では、角の σz は2〜3割大きく出ていました（検証用 A 11.4、B 13.9）。
+          ロープがプーリーへほぼ水平に入るようになったためです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="judgement">
+      <div class="container prose">
+        <h2>強度の判定</h2>
+        <p>
+          一番弱い角の σz を、層をはがす向きの強さ 10MPa と比べました。
+          安全率は「壊れる力 ÷ 実際にかかる力」で、1未満なら壊れます。ばらつきを考えて2以上あれば安心、を目安にしています。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">場合</th><th scope="col">検証用の安全率</th><th scope="col">判定</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">通常の昇降（T≈28N）</th><td class="num">3.4〜4.4</td><td>目安の2以上</td></tr>
+              <tr><th scope="row">片側のロープに全荷重（T≈55N）</th><td class="num">1.7〜2.2</td><td>ほぼ目安どおり（甘めの支え方なら2以上、厳しめでは少し下回る）</td></tr>
+              <tr><th scope="row">モーター拘束（T≈167N）</th><td class="num">0.58〜0.74</td><td>壊れる。モーターを止める対策が必要</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">元の形もほぼ同じ値です（通常 3.6〜4.4、片側 1.8〜2.3、拘束 0.60〜0.74）。</p>
+      </div>
+    </section>
+
+    <section class="section" id="fillet">
+      <div class="container prose">
+        <h2>追加の検証：角に丸みを付けたら</h2>
+        <p>
+          一番弱い角に丸み（フィレット）を付ければ力の集中がやわらぐのでは、と考え、検証用の形の内側の角に、丸みなし・半径1mm（R1）・半径2mm（R2）の3通りで計算しました。
+          アルミフレームの角が R1 なので、フレームにきちんと密着するのは R1 までです。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">T＝100N、MPa</th><th scope="col">なし・A</th><th scope="col">R1・A</th><th scope="col">R2・A</th><th scope="col">なし・B</th><th scope="col">R1・B</th><th scope="col">R2・B</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">スロットの端（端から2mm 以内）の σz</th><td class="num">10.8</td><td class="num">10.5</td><td class="num">9.4</td><td class="num">13.2</td><td class="num">12.3</td><td class="num">7.4</td></tr>
+              <tr><th scope="row">角の中央部（端から2mm 以上）の σz</th><td class="num">9.7</td><td class="num">7.7</td><td class="num">7.9</td><td class="num">5.5</td><td class="num">5.3</td><td class="num">3.6</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">比べるため3つとも同じ細かさ（要素の大きさ1.0mm）で計算しています。上の「数値のまとめ」とは細かさが違うため、値が少し異なります。</p>
+        <ul class="checks">
+          <li>R1 では、一番弱いスロットの端の応力はほとんど下がらない。角の中央部は約2割下がる</li>
+          <li>R2 にするとスロットの端で1〜4割下がるが、フレームの角に当たって固定具が約0.4mm 浮くため、そのままでは使えない</li>
+          <li>応力が高い本当の理由は、角がとがっていることより、耳から壁の根元へ流れ込む力がスロットの端に集まることだった</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="measures">
+      <div class="container prose">
+        <h2>対策</h2>
+        <ol class="steps stack">
+          <li><h3>検証用の形を採用してよい</h3><p>材料は半分以下で、強さはほぼ同じ。</p></li>
+          <li><h3>モーターを止める仕組みを入れる</h3><p>上端・下端のリミットスイッチ、またはモーター電流の制限でストールを防ぐ。これが無いと、どちらの形でも壊れる計算になる。</p></li>
+          <li><h3>印刷の向きを変える（一番効果が大きい）</h3><p>底板を下にして印刷すると、一番弱い場所に層をはがす向きの力がかかる。横向きに印刷すれば層に沿う向きになり、強さが約2倍（仮定で10→20MPa）になる見込み。サポート材が必要。</p></li>
+          <li><h3>充填率より外周を増やす</h3><p>厚さ4.5〜5mm と薄い部品なので、強さはほとんど外周で決まる。充填率は15%のままで、外周（壁）を4周以上、上下面を5層以上にする。</p></li>
+          <li><h3>形を変えるなら耳を厚くする</h3><p>角の丸みは効果が小さい。耳を厚くする（例 5→6〜7mm、スロットと反対側へ）方が有効と考えられる（効果は未計算）。</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="limits">
+      <div class="container prose">
+        <h2>この計算の前提と限界</h2>
+        <ul class="checks">
+          <li>ロープがドラムの下側から出る巻き方で計算している。上側から出る巻き方にすると、プーリーを引く力は 1.42T から 1.69T になり、応力は約3割大きくなる</li>
+          <li>ロープ張力は推定。モーターの最大トルクと、昇降機側の滑車による倍力の有無が分かれば、より正確にできる</li>
+          <li>3Dプリント品の強さ（層に沿う向き 20MPa、はがす向き 10MPa）は、一般的な値をもとにした控えめな仮定。プリンタや設定で変わる</li>
+          <li>壁の根元の角は鋭い角なので、角そのもの（一点）の値は計算の細かさで変わる。判定には要素1.5mm の計算の値を使っており、1.0mm の値で判定すると安全率は2〜3割小さくなる（通常の昇降で約2.7〜3.3）</li>
+          <li>線形静解析（ゆっくり一定の力をかけた計算）。PLA は長時間力がかかると少しずつ変形する（クリープ）ので、持ち上げたまま長く保つ場合は余裕を見る</li>
+          <li>プーリーは1つのかたまりとして扱い、ベアリングやねじ山は省略している</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかの技術詳細</h2>
+        <ul class="siblings"><li><a href="tech.html">昇降・カメラの技術詳細</a></li><li><a href="../move/tech.html">走行部の技術詳細</a></li><li><a href="../records/tech.html">資料作成の技術詳細</a></li><li><a href="../project/development.html">開発の進め方</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

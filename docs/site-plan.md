@@ -51,7 +51,7 @@
 |---|---|---|
 | ●○○ 概要 | 一般の来場者 | `site/index.html` |
 | ●●○ しくみ | 興味を持った人 | `move/`（盤の前まで運ぶ）、`lift/`（盤の上を見る）、`records/`（試験を記録する）、`project/`（プロジェクトについて） |
-| ●●● 技術詳細 | 技術者・審査員 | `move/tech.html`、`lift/tech.html`、`records/tech.html` |
+| ●●● 技術詳細 | 技術者・審査員 | `move/tech.html`、`lift/tech.html`、`records/tech.html`、`lift/strength.html`（プーリー固定具の強度検証）、`project/development.html`（ソフトウェアの開発の進め方） |
 
 書き分けのルール：
 
