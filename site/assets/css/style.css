@@ -487,6 +487,23 @@ figcaption {
 .key-danger::before { background: var(--danger); }
 .key-safe::before { background: var(--safe); }
 
+/* システム構成図（tech.html）。縦長の SVG なので、PC でも幅を絞って読める大きさにとどめる */
+.system-figure {
+  margin: 24px 0 0;
+  max-width: 30em;
+}
+
+.system-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.system-figure figcaption {
+  display: block;
+}
+
 /* 図 */
 .drawing {
   display: block;

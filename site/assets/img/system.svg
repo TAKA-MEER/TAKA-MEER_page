@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 760" width="380" height="760" role="img" aria-labelledby="title">
+<title id="title">高見舎 TAKA-MEER のシステム構成図</title>
+<style>
+svg { --ink:#1d272e; --muted:#56616a; --line:#b3b3a6; --soft:#e3e3db; --paper:#f3f4f1; --acc:#1f5fa8; }
+@media (prefers-color-scheme: dark) {
+  svg { --ink:#e7eae6; --muted:#a4adb3; --line:#3d464d; --soft:#232b31; --paper:#1a2127; --acc:#6aa5ec; }
+}
+text { font-family: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif; fill: var(--ink); }
+.bg { fill: var(--paper); }
+.box { fill: var(--soft); stroke: var(--muted); stroke-width: 1; }
+.box.ctrl { stroke: var(--acc); stroke-width: 1.8; }
+.grp { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 4; }
+.t { font-size: 11.5px; font-weight: 700; }
+.s { font-size: 9.5px; fill: var(--muted); }
+.gname { font-size: 12px; font-weight: 700; }
+.gcode { font-size: 10px; font-weight: 400; fill: var(--muted); }
+.gpow { font-size: 9px; fill: var(--muted); }
+.lbl { font-size: 9px; fill: var(--muted); }
+.lbl.acc { fill: var(--acc); }
+.leg { font-size: 10px; fill: var(--muted); }
+polyline { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.wire { stroke: var(--ink); stroke-width: 1.3; }
+.wifi { stroke: var(--acc); stroke-width: 1.5; stroke-dasharray: 5 3; }
+.mech { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 1.5 3; }
+#a path { fill: var(--ink); }
+</style>
+<defs><marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0.5 L8,4 L0,7.5 z"/></marker></defs>
+<rect width="380" height="760" class="bg"/>
+<polyline points="14,14 38,14" class="wire"/>
+<text x="44" y="18" class="leg" text-anchor="start">有線</text>
+<polyline points="80,14 104,14" class="wifi"/>
+<text x="110" y="18" class="leg" text-anchor="start">Wi-Fi</text>
+<polyline points="152,14 176,14" class="mech"/>
+<text x="182" y="18" class="leg" text-anchor="start">機械</text>
+<rect x="218" y="8" width="18" height="12" rx="2" class="box ctrl"/>
+<text x="242" y="18" class="leg" text-anchor="start">コンピュータ・マイコン</text>
+<rect x="14" y="34" width="162" height="40" rx="4" class="box ctrl"/>
+<text x="95.0" y="51" class="t" text-anchor="middle">PC</text>
+<text x="95.0" y="65" class="s" text-anchor="middle">ROS 2・走行の処理</text>
+<rect x="190" y="34" width="152" height="40" rx="4" class="box"/>
+<text x="266.0" y="51" class="t" text-anchor="middle">操作端末</text>
+<text x="266.0" y="65" class="s" text-anchor="middle">ブラウザで操作画面を開く</text>
+<polyline points="150,74 150,122" class="wifi"/>
+<polyline points="206,74 206,122" class="wifi"/>
+<text x="178" y="88" class="lbl" text-anchor="middle">Wi-Fi</text>
+<rect x="4" y="94" width="348" height="218" rx="8" class="grp"/>
+<text x="342" y="112" class="gname" text-anchor="end">走行部<tspan class="gcode" dx="6">th</tspan></text>
+<text x="342" y="305" class="gpow" text-anchor="end">電源：機体の24V系統</text>
+<rect x="14" y="122" width="100" height="40" rx="4" class="box"/>
+<text x="64.0" y="139" class="t" text-anchor="middle">RPLIDAR S1</text>
+<text x="64.0" y="153" class="s" text-anchor="middle">2D-LiDAR・全周</text>
+<rect x="128" y="122" width="112" height="40" rx="4" class="box ctrl"/>
+<text x="184.0" y="139" class="t" text-anchor="middle">Raspberry Pi 4</text>
+<text x="184.0" y="153" class="s" text-anchor="middle">Wi-Fi AP・中継</text>
+<rect x="14" y="186" width="100" height="40" rx="4" class="box"/>
+<text x="64.0" y="203" class="t" text-anchor="middle">IMU</text>
+<text x="64.0" y="217" class="s" text-anchor="middle">BNO055</text>
+<rect x="128" y="186" width="100" height="40" rx="4" class="box ctrl"/>
+<text x="178.0" y="203" class="t" text-anchor="middle">ESP32</text>
+<text x="178.0" y="217" class="s" text-anchor="middle">走行の速度制御</text>
+<rect x="14" y="250" width="100" height="40" rx="4" class="box"/>
+<text x="64.0" y="267" class="t" text-anchor="middle">非常停止ボタン</text>
+<text x="64.0" y="281" class="s" text-anchor="middle">駆動の電源を切る</text>
+<rect x="128" y="250" width="100" height="40" rx="4" class="box"/>
+<text x="178.0" y="267" class="t" text-anchor="middle">MD10C ×2</text>
+<text x="178.0" y="281" class="s" text-anchor="middle">モータードライバ</text>
+<rect x="242" y="250" width="100" height="40" rx="4" class="box"/>
+<text x="292.0" y="267" class="t" text-anchor="middle">クローラー</text>
+<text x="292.0" y="281" class="s" text-anchor="middle">左右モーター</text>
+<polyline points="114,142 128,142" class="wire" marker-end="url(#a)"/>
+<polyline points="114,206 128,206" class="wire" marker-end="url(#a)"/>
+<polyline points="178,162 178,186" class="wire" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="184" y="178" class="lbl" text-anchor="start">USBシリアル</text>
+<polyline points="178,226 178,250" class="wire" marker-end="url(#a)"/>
+<polyline points="228,270 242,270" class="wire" marker-end="url(#a)"/>
+<polyline points="114,270 128,270" class="wire" marker-end="url(#a)"/>
+<polyline points="292,250 292,206 228,206" class="wire" marker-end="url(#a)"/>
+<text x="288" y="240" class="lbl" text-anchor="end">エンコーダ</text>
+<polyline points="240,142 366,142 366,564 248,564" class="wifi"/>
+<polyline points="366,324 64,324 64,364" class="wifi"/>
+<text x="370" y="330" class="lbl" text-anchor="start" transform="rotate(90 370 330)">Wi-Fi（アクセスポイント経由）</text>
+<rect x="4" y="336" width="348" height="154" rx="8" class="grp"/>
+<text x="342" y="354" class="gname" text-anchor="end">昇降部<tspan class="gcode" dx="6">hf ／ hve-system</tspan></text>
+<text x="342" y="483" class="gpow" text-anchor="end">電源：機体の24V系統（モーターは非常停止で切れる）</text>
+<rect x="14" y="364" width="100" height="40" rx="4" class="box ctrl"/>
+<text x="64.0" y="381" class="t" text-anchor="middle">ESP32</text>
+<text x="64.0" y="395" class="s" text-anchor="middle">昇降制御・画面</text>
+<rect x="128" y="364" width="100" height="40" rx="4" class="box"/>
+<text x="178.0" y="381" class="t" text-anchor="middle">MD10C</text>
+<text x="178.0" y="395" class="s" text-anchor="middle">モータードライバ</text>
+<rect x="242" y="364" width="100" height="40" rx="4" class="box"/>
+<text x="292.0" y="381" class="t" text-anchor="middle">昇降モーター</text>
+<text x="292.0" y="395" class="s" text-anchor="middle">パワーウィンドウ用</text>
+<rect x="14" y="428" width="100" height="40" rx="4" class="box"/>
+<text x="64.0" y="445" class="t" text-anchor="middle">下端スイッチ</text>
+<text x="64.0" y="459" class="s" text-anchor="middle">リミットスイッチ</text>
+<rect x="128" y="428" width="100" height="40" rx="4" class="box"/>
+<text x="178.0" y="445" class="t" text-anchor="middle">エンコーダ</text>
+<text x="178.0" y="459" class="s" text-anchor="middle">E6A2-CW3C・高さ</text>
+<polyline points="114,384 128,384" class="wire" marker-end="url(#a)"/>
+<polyline points="228,384 242,384" class="wire" marker-end="url(#a)"/>
+<polyline points="40,428 40,404" class="wire" marker-end="url(#a)"/>
+<polyline points="160,428 160,416 90,416 90,404" class="wire" marker-end="url(#a)"/>
+<polyline points="292,404 292,448 228,448" class="mech"/>
+<text x="298" y="432" class="lbl" text-anchor="start">ロープの</text>
+<text x="298" y="443" class="lbl" text-anchor="start">巻き取り軸</text>
+<text x="352" y="507" class="lbl acc" text-anchor="end">カメラ部 ⇄ 昇降部：昇降の命令と天井の距離 ／ 高さと状態</text>
+<rect x="4" y="516" width="348" height="228" rx="8" class="grp"/>
+<text x="342" y="534" class="gname" text-anchor="end">カメラ部<tspan class="gcode" dx="6">ve ／ hve-system</tspan></text>
+<text x="342" y="737" class="gpow" text-anchor="end">電源：モバイルバッテリー（非常停止で切れない）</text>
+<rect x="108" y="544" width="140" height="40" rx="4" class="box ctrl"/>
+<text x="178.0" y="561" class="t" text-anchor="middle">M5Stack UnitV2</text>
+<text x="178.0" y="575" class="s" text-anchor="middle">カメラ・映像配信・画面</text>
+<rect x="108" y="608" width="140" height="40" rx="4" class="box ctrl"/>
+<text x="178.0" y="625" class="t" text-anchor="middle">Arduino UNO</text>
+<text x="178.0" y="639" class="s" text-anchor="middle">向きの制御・距離の計測</text>
+<rect x="14" y="672" width="100" height="40" rx="4" class="box"/>
+<text x="64.0" y="689" class="t" text-anchor="middle">28BYJ-48</text>
+<text x="64.0" y="703" class="s" text-anchor="middle">ヨー（左右）</text>
+<rect x="128" y="672" width="100" height="40" rx="4" class="box"/>
+<text x="178.0" y="689" class="t" text-anchor="middle">MG996R</text>
+<text x="178.0" y="703" class="s" text-anchor="middle">ピッチ（上下）</text>
+<rect x="242" y="672" width="100" height="40" rx="4" class="box"/>
+<text x="292.0" y="689" class="t" text-anchor="middle">SRF02</text>
+<text x="292.0" y="703" class="s" text-anchor="middle">天井までの距離</text>
+<polyline points="178,584 178,608" class="wire" marker-start="url(#a)" marker-end="url(#a)"/>
+<text x="184" y="600" class="lbl" text-anchor="start">UART</text>
+<polyline points="178,648 178,672" class="wire" marker-end="url(#a)"/>
+<polyline points="178,660 64,660 64,672" class="wire" marker-end="url(#a)"/>
+<polyline points="178,660 292,660 292,672" class="wire"/>
+<text x="70" y="656" class="lbl" text-anchor="start">ULN2003経由</text>
+<text x="286" y="656" class="lbl" text-anchor="end">I2C</text>
+</svg>

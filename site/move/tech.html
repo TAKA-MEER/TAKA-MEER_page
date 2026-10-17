@@ -51,6 +51,13 @@
         <p>
           ESP32 は当初 Wi-Fi で直接PCと通信していましたが、教示の途中で通信が途切れる問題が起きたため、2026年9月に Raspberry Pi 4 とのUSBシリアル直結に変更しました。
         </p>
+        <p>
+          Raspberry Pi 4 のアクセスポイントには、昇降・カメラ系の機器もつながります。昇降・カメラ系とは通信せず、共有するのは機体・無線・電源だけです。
+        </p>
+        <figure class="system-figure">
+          <a href="../assets/img/system.svg"><img src="../assets/img/system.svg" width="380" height="760" loading="lazy" alt="システム構成図。走行部はRaspberry Pi 4がWi-Fiのアクセスポイントと中継を担い、RPLIDAR S1をUSBで、ESP32をUSBシリアルでつなぐ。ESP32はIMUを読み、モータードライバMD10C 2台を通して左右のクローラーを動かし、エンコーダを読む。非常停止ボタンは駆動の電源を切る。PCと操作端末、昇降部のESP32、カメラ部のUnitV2はWi-Fiでアクセスポイントにつながる。"></a>
+          <figcaption>システム全体の構成（図をタップすると拡大できます）。昇降・カメラ系の詳細は<a href="../lift/tech.html">昇降・カメラの技術詳細</a></figcaption>
+        </figure>
       </div>
     </section>
 
