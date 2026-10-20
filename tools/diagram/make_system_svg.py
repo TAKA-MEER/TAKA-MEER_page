@@ -9,54 +9,19 @@
   docs/plan/spec/Spec.md §5、docs/plan/detailed/DetailedDesign.md §2、DetailedDesign-hardware.md
 """
 
-from pathlib import Path
-from xml.sax.saxutils import escape
-
-OUT = Path(__file__).resolve().parents[2] / "site" / "assets" / "img" / "system.svg"
+from svgkit import Diagram
 
 W, H = 380, 760
 COL_X = {1: 14, 2: 128, 3: 242}  # 箱の左端
-BOX_W, BOX_H = 100, 40
+BOX_W = 100
 
-parts = []
-
-
-def text(x, y, s, cls, anchor="middle", extra=""):
-    parts.append(
-        f'<text x="{x}" y="{y}" class="{cls}" text-anchor="{anchor}"{extra}>{escape(s)}</text>'
-    )
-
-
-def box(x, y, w, title, sub, ctrl=False):
-    cls = "box ctrl" if ctrl else "box"
-    parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{BOX_H}" rx="4" class="{cls}"/>')
-    cx = x + w / 2
-    text(cx, y + 17, title, "t")
-    text(cx, y + 31, sub, "s")
+d = Diagram(W, H, "高見舎 TAKA-MEER のシステム構成図")
+text, box, line, group = d.text, d.box, d.line, d.group
+parts = d.parts
 
 
 def cbox(col, y, title, sub, ctrl=False):
     box(COL_X[col], y, BOX_W, title, sub, ctrl)
-
-
-def line(points, cls="wire", start=False, end=True):
-    d = " ".join(f"{x},{y}" for x, y in points)
-    marks = ""
-    if cls == "wire":
-        if start:
-            marks += ' marker-start="url(#a)"'
-        if end:
-            marks += ' marker-end="url(#a)"'
-    parts.append(f'<polyline points="{d}" class="{cls}"{marks}/>')
-
-
-def group(top, bottom, name, code, power):
-    parts.append(f'<rect x="4" y="{top}" width="348" height="{bottom - top}" rx="8" class="grp"/>')
-    parts.append(
-        f'<text x="342" y="{top + 18}" class="gname" text-anchor="end">{escape(name)}'
-        f'<tspan class="gcode" dx="6">{escape(code)}</tspan></text>'
-    )
-    text(342, bottom - 7, power, "gpow", anchor="end")
 
 
 # 凡例
@@ -138,39 +103,4 @@ line([(178, C2 + 52), (292, C2 + 52), (292, C3)], end=False)
 text(70, C2 + 48, "ULN2003経由", "lbl", "start")
 text(286, C2 + 48, "I2C", "lbl", "end")
 
-STYLE = """
-svg { --ink:#1d272e; --muted:#56616a; --line:#b3b3a6; --soft:#e3e3db; --paper:#f3f4f1; --acc:#1f5fa8; }
-@media (prefers-color-scheme: dark) {
-  svg { --ink:#e7eae6; --muted:#a4adb3; --line:#3d464d; --soft:#232b31; --paper:#1a2127; --acc:#6aa5ec; }
-}
-text { font-family: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif; fill: var(--ink); }
-.bg { fill: var(--paper); }
-.box { fill: var(--soft); stroke: var(--muted); stroke-width: 1; }
-.box.ctrl { stroke: var(--acc); stroke-width: 1.8; }
-.grp { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 4; }
-.t { font-size: 11.5px; font-weight: 700; }
-.s { font-size: 9.5px; fill: var(--muted); }
-.gname { font-size: 12px; font-weight: 700; }
-.gcode { font-size: 10px; font-weight: 400; fill: var(--muted); }
-.gpow { font-size: 9px; fill: var(--muted); }
-.lbl { font-size: 9px; fill: var(--muted); }
-.lbl.acc { fill: var(--acc); }
-.leg { font-size: 10px; fill: var(--muted); }
-polyline { fill: none; stroke-linejoin: round; stroke-linecap: round; }
-.wire { stroke: var(--ink); stroke-width: 1.3; }
-.wifi { stroke: var(--acc); stroke-width: 1.5; stroke-dasharray: 5 3; }
-.mech { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 1.5 3; }
-#a path { fill: var(--ink); }
-"""
-
-svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-labelledby="title">
-<title id="title">高見舎 TAKA-MEER のシステム構成図</title>
-<style>{STYLE}</style>
-<defs><marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0.5 L8,4 L0,7.5 z"/></marker></defs>
-<rect width="{W}" height="{H}" class="bg"/>
-{chr(10).join(parts)}
-</svg>
-"""
-
-OUT.write_text(svg, encoding="utf-8", newline="\n")
-print(f"wrote {OUT}")
+d.write("system.svg")

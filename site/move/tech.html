@@ -121,6 +121,10 @@
           <li>LiDAR の途絶、ESP32 の通信途絶などのフォルトを検知すると、出力を即ゼロにして待機状態へ移る。最終的な保証は ESP32 のウォッチドッグ（600ms）</li>
           <li>設定値は機体が自分で走らない状態でだけ変更でき、誰が・いつ・何を根拠に決めたかが残る。走行中に安全の閾値が変わる経路を作らない</li>
         </ul>
+        <figure class="system-figure">
+          <a href="../assets/img/cmd-vel.svg"><img src="../assets/img/cmd-vel.svg" width="380" height="482" loading="lazy" alt="速度指令の流れの図。PC上のROS 2で、手動操作（jog_gate経由、優先30）、教示再生のreplay_runner（優先20）、Nav2（優先10）の指令がtwist_muxに入り、優先度の高いものだけが通る。safety_monitorは故障や非常停止を検知するとtwist_muxをロックして全指令を止める。twist_muxの出力はobstacle_limiterで障害物に応じて減速・停止され、/cmd_velとして20Hzでth_esp32_bridgeに渡り、Raspberry Pi 4経由でESP32へ送られてクローラーを動かす。RPLIDAR S1の距離データはsafety_monitorとobstacle_limiterに入る。"></a>
+          <figcaption>速度指令の流れ（図をタップすると拡大できます）。駆動へ速度を送れるのは <code>obstacle_limiter</code> だけで、ほかのノードからモーターを直接動かす経路はありません</figcaption>
+        </figure>
       </div>
     </section>
 

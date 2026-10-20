@@ -50,6 +50,10 @@
         <p>
           外部通信をしないことを検証中に確かめ、モデル取得ライブラリ（<code>huggingface_hub</code>）からの意図しない通信を検出して遮断しました（<code>HF_HUB_OFFLINE=1</code>）。
         </p>
+        <figure class="system-figure">
+          <a href="../assets/img/minutes.svg"><img src="../assets/img/minutes.svg" width="380" height="490" loading="lazy" alt="議事録システムの構成図。試験場のPC（Windows、Docker）の中に、内蔵マイクで録音するブラウザ1と、自社側の人が付けるワイヤレスイヤホンで録音するブラウザ2がある。どちらもWebSocketでminutes-appと音声・文字起こしをやりとりする。minutes-appはminutes-ollama（Ollama、qwen3.5:9b）に議事録を生成させ、Wordの議事録を出力する。GPU（VRAM 8GB）はminutes-appとminutes-ollamaが交互に使う。インターネットには会話の内容を送らない。"></a>
+          <figcaption>議事録システムの構成（図をタップすると拡大できます）</figcaption>
+        </figure>
       </div>
     </section>
 
