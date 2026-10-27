@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>試行錯誤の記録 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="開発の中でうまくいかなかったことと、それを受けて変えたこと。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">プロジェクトについて</a></li><li aria-current="page">試行錯誤の記録</li></ol></nav>
+        <h1>試行錯誤の記録</h1>
+        <p class="lead">開発の中でうまくいかなかったことと、それを受けて変えたことをまとめました。数字は、2026年8〜10月に行った PoC（概念実証）の試験から引いています。</p>
+      </div>
+    </div>
+
+    <section class="section" id="follow">
+      <div class="container prose">
+        <h2>人について行くだけでは足りなかった</h2>
+        <p>
+          保管場所から試験場までの移動で、最初に試したのは、LiDAR（レーザーで周囲の距離を測るセンサー）で人の脚を見分けて後をついていく「追従走行」でした。
+          2026年8月17日、校舎の廊下約170mで試すと、完走はできたものの、次のような問題が出ました。
+        </p>
+        <ul class="checks">
+          <li>ついて行く相手を見失い、選び直したのが12回。別の人に乗り移ったのが1回</li>
+          <li>壁に近づきすぎて止まったのが5回</li>
+          <li>まっすぐな廊下でも、左右に約1m振れた</li>
+        </ul>
+        <p>
+          そこで、追従走行の改善を続けながら、人が一度操作して走らせた道をロボットがひとりでたどる「教示再生走行」を並行して開発しました。
+          考えられる走り方は途中で削らず、全部つくって試験してから選ぶ方針です。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="replay">
+      <div class="container prose">
+        <h2>完走までに4回失敗した</h2>
+        <p>
+          教示再生走行は、2026年9月3日〜7日に同じコースで試験しました。
+          5回目で人の手を借りずに完走するまで、毎回違う理由で止まりました。
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">回</th><th scope="col">起きたこと</th><th scope="col">直したこと</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">1</th><td>地図をつくり直したら、覚えた道の一部が壁の中に残った</td><td>古い道と新しい道を取り違えないようにした</td></tr>
+              <tr><th scope="row">2</th><td>曲がり角で、自分が地図のどこにいるか分からなくなった</td><td>地図の読み込みが積み重なる不具合を直した</td></tr>
+              <tr><th scope="row">3</th><td>その場で向きを変えるとき、クローラー（帯状のベルトで進む足回り）が滑った</td><td>回転を測るセンサー（ジャイロ）の値も使って向きを求めるようにした</td></tr>
+              <tr><th scope="row">4</th><td>無線が途切れて、道を覚えさせきれなかった</td><td>モーターを動かすマイコンとの接続を、無線から有線に変えた</td></tr>
+              <tr><th scope="row">5</th><td>完走。所要6分13秒、終点のずれ500mm以内、人の手出しなし</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          ただし報告書では、4回目までの改善はたまたまのばらつきを改善の効果と取り違えた可能性があること、5回目の完走は1回だけの結果であることを注記しています。
+          1回うまくいったことを「直った」とは言わず、同じ結果がくり返し出るかの確認を続けています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="rope">
+      <div class="container prose">
+        <h2>ワイヤーをやめて、ひもにした</h2>
+        <p>
+          昇降機は、ロープを巻き取って伸び縮みさせます。
+          はじめは直径2mmのステンレスワイヤーを使う予定でしたが、このワイヤーは半径30mmより急に曲げられません。
+          それを満たすには設計を全面的に変える必要があったため、柔らかい直径4mmのパラコード（ナイロン製の丈夫なひも）に替えました。
+          これで摩擦も減り、2026年9月22日に自動で昇降できることを確かめました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="redesign">
+      <div class="container prose">
+        <h2>昇降機とカメラ部を設計し直した</h2>
+        <p>
+          最初の試作の昇降機は、アルミの角パイプを3段に重ねた伸縮構造でした。
+          自動で昇降できたものの、3段目が摩擦に負けて下がり切らない問題が残り、全体を設計し直すことになりました。
+          現在の CAD モデルでは、昇降機は2段で、それぞれ約1m伸びます。
+        </p>
+        <p>
+          カメラ部も、最初は Raspberry Pi（手のひらサイズのコンピュータ）と Webカメラで試作しましたが、映像を連続して送る部分が完成しませんでした。
+          2026年10月、使える機器が増えたのを機に、カメラを内蔵した小型コンピュータ M5Stack UnitV2 に切り替えました。
+          実機の調査では、映像を16分間、約8fps で途切れずに送れることを確かめています。
+        </p>
+        <p>
+          昇降機の高さの測り方も、超音波の距離計から、ロープの巻き取り軸の回転を数えるセンサー（エンコーダ）に変えました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="pulley">
+      <div class="container prose">
+        <h2>壊れる前に、計算で見つけた</h2>
+        <p>
+          ロープの向きを変える滑車（プーリー）を支える部品は、3Dプリンターで作ります。
+          実際に組む前に、コンピュータ上で力をかけて強度を計算しました。
+        </p>
+        <p>
+          ふつうに昇降させるだけなら、壊れる力まで約3.4〜4.4倍の余裕がありました。
+          ところが、モーターが巻き上げの端で止まらずに引き続けると、壊れるという結果が出ました。
+          そこで、モーターを止める仕組みを入れ、部品の形と印刷の設定も決め直しました。
+        </p>
+        <p><a href="../lift/strength.html">プーリー固定具の強度検証</a>に、計算の方法と結果をまとめています。</p>
+      </div>
+    </section>
+
+    <section class="section" id="long-test">
+      <div class="container prose">
+        <h2>短い試験では見つからない不具合があった</h2>
+        <p>
+          議事録をつくる仕組みは、合成音声で読み上げた模擬の立会試験で検証しました。
+          約9分の試験を12回くり返しても出なかった不具合が、約3時間の試験で3つ見つかりました。
+        </p>
+        <ul class="checks">
+          <li>誰も話していない時間に、ありもしない言葉を書き起こしてしまう</li>
+          <li>会話が長すぎて、AIが一度に読める量を超えてしまう</li>
+          <li>別々の話題を、誤って1つにまとめてしまう</li>
+        </ul>
+        <p>
+          ほかにも、議事録をまとめるAIを3種類比べたところ、1つは日付を作り話で書いてしまったため、採用しませんでした。
+        </p>
+        <p>
+          自社側とお客様側の発言の見分け方も変えました。
+          はじめは5秒ごとの音声全体の大きさで判定していたため、声が10dB小さいだけで、全部の発言をお客様側と判定してしまうことがありました。
+          細かく区切った音量を記録し、直近60秒の分布から基準を自動で決めるようにして、正解率（イヤホンを付けていない人の発言を除いて数えたもの）は 80〜92% から 88〜99% に上がりました。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="deeper">
+      <div class="container prose">
+        <h2>数字の出典</h2>
+        <p>このページの数字は、各技術詳細ページに載せているものと同じです。</p>
+        <ul class="siblings"><li><a href="../move/tech.html">走行部の技術詳細</a></li><li><a href="../lift/tech.html">昇降・カメラの技術詳細</a></li><li><a href="../records/tech.html">資料作成の技術詳細</a></li><li><a href="../lift/strength.html">プーリー固定具の強度検証</a></li></ul>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="./">プロジェクトについて</a></li><li><a href="development.html">ソフトウェアの開発の進め方</a></li><li><a href="../glossary/">用語集</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../day/">立会試験の1日</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+          <li><a href="../glossary/">用語集</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

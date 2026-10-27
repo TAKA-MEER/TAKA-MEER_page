@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>立会試験の1日 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="ロボットと記録の道具を、立会試験の1日の流れに沿って使うとどうなるか。目指している使い方を順に紹介します。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち1（概要）"><span class="lamps" aria-hidden="true"><i class="on"></i><i></i><i></i></span>概要</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">立会試験の1日</li></ol></nav>
+        <h1>立会試験の1日</h1>
+        <p class="lead">「運ぶ」「見る」「記録する」の3つの機能を、立会試験の1日の流れに沿って使うとどうなるか。目指している使い方を、順に紹介します。</p>
+      </div>
+    </div>
+
+    <section class="section" id="one-person">
+      <div class="container prose">
+        <h2>1人で回せることを目指して</h2>
+        <p>
+          ロボットを動かす準備から試験の記録まで、試験を担当する人が1人で進められることを目標にしています。
+          操作はすべて、タブレットやPCのブラウザで行います。
+        </p>
+        <p class="note">
+          ここに書いたのは目指している使い方です。それぞれの機能は開発と検証の途中で、試験の結果は各機能のページで紹介しています。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="before">
+      <div class="container">
+        <div class="prose">
+          <h2>前もって：会場と道を覚えさせる</h2>
+        </div>
+        <ol class="steps stack">
+          <li>
+            <h3>保管場所からの道を覚えさせる</h3>
+            <p>人が一度ロボットを操作して、保管場所から試験場まで走らせます。ロボットはその道を記録します。</p>
+          </li>
+          <li>
+            <h3>試験場の地図をつくる</h3>
+            <p>試験の前日に、ロボットに試験場を案内して回り、会場の地図をつくらせます。</p>
+          </li>
+          <li>
+            <h3>盤の位置を登録する</h3>
+            <p>確認する盤の位置を、1つずつ登録します。盤に見立てた5か所での試験では、地図づくりと登録を4分弱で終えました。</p>
+          </li>
+        </ol>
+        <p class="note">使う機能：<a href="../move/">盤の前まで運ぶ</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="move">
+      <div class="container">
+        <div class="prose">
+          <h2>当日：盤の前まで運ぶ</h2>
+        </div>
+        <ol class="steps stack">
+          <li>
+            <h3>覚えた道をたどって試験場へ</h3>
+            <p>保管場所から試験場まで、ロボットが覚えた道をひとりでたどります。人や物が前に来たら約30cm手前で止まり、いなくなると自分から走り出します。</p>
+          </li>
+          <li>
+            <h3>確認する盤を選ぶ</h3>
+            <p>タブレットの画面で盤を選ぶと、ロボットがその盤の前まで移動して止まります。</p>
+          </li>
+        </ol>
+        <p class="note">使う機能：<a href="../move/">盤の前まで運ぶ</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="look">
+      <div class="container">
+        <div class="prose">
+          <h2>盤ごとに：上を見る</h2>
+        </div>
+        <ol class="steps stack">
+          <li>
+            <h3>映像を見ながらカメラを上げる</h3>
+            <p>手元の画面でカメラの映像を見ながら昇降機を上げ、盤の上面が見えたところで止めます。盤ごとの高さを前もって登録しておく必要はありません。</p>
+          </li>
+          <li>
+            <h3>向きを合わせて確かめる</h3>
+            <p>カメラを左右・上下に動かし、拡大して盤の上面を確かめます。確認する人は、脚立に登らずに床に立ったまま見られます。</p>
+          </li>
+          <li>
+            <h3>下げて次の盤へ</h3>
+            <p>昇降機を下げてから、次の盤を選びます。</p>
+          </li>
+        </ol>
+        <p class="note">使う機能：<a href="../lift/">盤の上を見る</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="record">
+      <div class="container">
+        <div class="prose">
+          <h2>試験のあいだ：記録する</h2>
+          <p>記録の道具はロボットとは別に、試験場に置いたPCで動きます。</p>
+        </div>
+        <ol class="steps stack">
+          <li>
+            <h3>会話を文字に起こしておく</h3>
+            <p>試験中の会話を、PCがその場で文字に起こします。自社側の人はワイヤレスイヤホンを付けておき、自社側とお客様側の発言を見分けます。</p>
+          </li>
+          <li>
+            <h3>測定値を声で成績表に書く</h3>
+            <p>ボタンを押しながら測定値を読み上げると、Excel の成績表の該当する欄に記入されます。</p>
+          </li>
+        </ol>
+        <p class="note">使う機能：<a href="../records/">試験を記録する</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="after">
+      <div class="container">
+        <div class="prose">
+          <h2>試験のあと：まとめて、帰る</h2>
+        </div>
+        <ol class="steps stack">
+          <li>
+            <h3>議事録がすぐにできる</h3>
+            <p>試験が終わるとすぐ、AIが会話から議事録をまとめ、Word ファイルとして出力します。書類ができるまでお客様を待たせる時間を減らします。</p>
+          </li>
+          <li>
+            <h3>ロボットは保管場所へ戻る</h3>
+            <p>覚えた道をたどって、保管場所まで戻ります。</p>
+          </li>
+        </ol>
+        <p class="note">使う機能：<a href="../records/">試験を記録する</a>、<a href="../move/">盤の前まで運ぶ</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="../move/">盤の前まで運ぶ</a></li><li><a href="../lift/">盤の上を見る</a></li><li><a href="../records/">試験を記録する</a></li><li><a href="../glossary/">用語集</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../day/">立会試験の1日</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+          <li><a href="../glossary/">用語集</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

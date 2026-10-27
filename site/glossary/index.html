@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>用語集 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="このサイトに出てくる用語の説明。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">用語集</li></ol></nav>
+        <h1>用語集</h1>
+        <p class="lead">このサイトに出てくる用語を、分野ごとにまとめました。それぞれの用語が出てくるページへのリンクも付けています。</p>
+        <ul class="siblings">
+          <li><a href="#general">全体</a></li>
+          <li><a href="#move">走行</a></li>
+          <li><a href="#lift">昇降・カメラ</a></li>
+          <li><a href="#records">記録</a></li>
+          <li><a href="#dev">開発</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="section" id="general">
+      <div class="container prose">
+        <h2>全体</h2>
+        <dl class="glossary">
+          <dt id="switchboard">配電盤</dt>
+          <dd>受け取った電気を、建物や設備の各所へ分けて送るための装置を収めた盤。工場で組み立て、出荷前に試験します。高見舎が対象にしている盤は高さ約3mです。<span class="where"><a href="../">概要</a></span></dd>
+
+          <dt id="witness-test">立会試験</dt>
+          <dd>出荷前の製品を、お客様が立ち会って確認する試験。盤の上面を見るには、今は脚立に登る必要があります。<span class="where"><a href="../">概要</a>、<a href="../day/">立会試験の1日</a></span></dd>
+
+          <dt id="webui">WebUI（ウェブ ユーアイ）</dt>
+          <dd>ブラウザで開く操作画面。専用のアプリを入れなくても、タブレットやPCで使えます。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="mockup">モックアップ</dt>
+          <dd>見た目と操作の流れを確かめるための見本。このサイトから見られる操作画面のモックアップは、実際のロボットにはつながっていません。<span class="where"><a href="../project/#source">プロジェクトについて</a></span></dd>
+
+          <dt id="e-stop">非常停止ボタン</dt>
+          <dd>押すとすぐに機械を止めるためのボタン。高見舎では、機体のボタンを押すと走行部と昇降機の電源が切れます。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="move">
+      <div class="container prose">
+        <h2>走行</h2>
+        <dl class="glossary">
+          <dt id="crawler">クローラー</dt>
+          <dd>車輪の代わりに、帯状のベルト（履帯）を回して進む足回り。その場で向きを変えるときに、床の上で滑ることがあります。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="lidar">LiDAR（ライダー）</dt>
+          <dd>レーザーを当てて、跳ね返ってくるまでの時間から周囲の物までの距離を測るセンサー。走行部では、回転しながら周囲360°を測るものを使っています。<span class="where"><a href="../move/">盤の前まで運ぶ</a></span></dd>
+
+          <dt id="slam">SLAM（スラム）</dt>
+          <dd>移動しながら周囲の地図をつくり、同時にその地図の中で自分がどこにいるかを求める技術。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="localization">自己位置推定</dt>
+          <dd>センサーの値と地図を照らし合わせて、ロボットが自分の位置と向きを求めること。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="follow">追従走行</dt>
+          <dd>人の後をついて行く走り方。高見舎では LiDAR で人の脚を見分けて追いかけます。<span class="where"><a href="../move/">盤の前まで運ぶ</a></span></dd>
+
+          <dt id="teach-replay">教示再生走行</dt>
+          <dd>人が一度操作して走らせた道を記録し（教示）、あとでロボットがひとりで同じ道をたどる（再生）走り方。<span class="where"><a href="../move/">盤の前まで運ぶ</a></span></dd>
+
+          <dt id="imu">IMU・ジャイロ</dt>
+          <dd>機体の傾きや、回転の速さを測るセンサー。クローラーが滑ったときも、向きの変化を正しく求めるのに使います。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="esp32">ESP32</dt>
+          <dd>無線通信の機能を持つ、小型で安価なマイコン（機器の制御に使う小さなコンピュータ）。走行部と昇降部で、モーターの制御に使っています。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="raspberry-pi">Raspberry Pi（ラズベリーパイ）</dt>
+          <dd>手のひらサイズのコンピュータ。走行部では、LiDAR の読み取りと無線の中継に使っています。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="ros2">ROS 2（ロス ツー）</dt>
+          <dd>ロボットのソフトウェアを機能ごとの部品に分け、部品どうしをつなぐための枠組み。走行部を動かすPCで使っています。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+
+          <dt id="watchdog">ウォッチドッグ</dt>
+          <dd>決まった時間のあいだ命令が届かなければ、自動で止める見張りの仕組み。通信が途切れても、ロボットが走り続けないようにします。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="lift">
+      <div class="container prose">
+        <h2>昇降・カメラ</h2>
+        <dl class="glossary">
+          <dt id="lifter">昇降機</dt>
+          <dd>カメラを盤の上まで持ち上げる、伸び縮みする柱。ロープを巻き取って伸ばします。<span class="where"><a href="../lift/">盤の上を見る</a></span></dd>
+
+          <dt id="pulley">プーリー</dt>
+          <dd>ロープの向きを変える滑車。<span class="where"><a href="../lift/strength.html">プーリー固定具の強度検証</a></span></dd>
+
+          <dt id="paracord">パラコード</dt>
+          <dd>ナイロン製の、細くて丈夫なひも。昇降機のロープに使っています。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
+
+          <dt id="worm-gear">ウォームギア</dt>
+          <dd>ねじの形をした歯車と、それにかみ合う歯車の組み合わせ。ねじ側から回すことはできても、反対側からは回りにくい性質があります。そのため電源が切れても、昇降機は自分の重さで落ちません。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
+
+          <dt id="encoder">エンコーダ</dt>
+          <dd>軸がどれだけ回ったかを測るセンサー。ロープを巻き取る軸の回転から、昇降機の高さを求めます。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
+
+          <dt id="limit-switch">リミットスイッチ（下端スイッチ）</dt>
+          <dd>物が触れると切り替わるスイッチ。昇降機がいちばん下まで下がったことを知るのに使い、そこを高さの基準にします。<span class="where"><a href="../lift/">盤の上を見る</a></span></dd>
+
+          <dt id="ultrasonic">超音波距離計</dt>
+          <dd>人に聞こえない高い音を出し、跳ね返ってくるまでの時間から距離を測るセンサー。カメラ部から天井までの距離を測ります。<span class="where"><a href="../lift/">盤の上を見る</a></span></dd>
+
+          <dt id="yaw-pitch">ヨー・ピッチ</dt>
+          <dd>向きの変え方の呼び名。ヨーは左右の首振り、ピッチは上下の首振りです。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
+
+          <dt id="digital-zoom">デジタルズーム</dt>
+          <dd>撮った映像の一部を切り出して拡大すること。レンズを動かさずに拡大できます。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
+
+          <dt id="safety-factor">安全率</dt>
+          <dd>部品が壊れる力が、実際にかかる力の何倍あるか。1より大きいほど余裕があります。<span class="where"><a href="../lift/strength.html">プーリー固定具の強度検証</a></span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="records">
+      <div class="container prose">
+        <h2>記録</h2>
+        <dl class="glossary">
+          <dt id="transcription">文字起こし（音声認識）</dt>
+          <dd>話した声を、コンピュータが文字に変えること。<span class="where"><a href="../records/">試験を記録する</a></span></dd>
+
+          <dt id="speaker">話者判定</dt>
+          <dd>それぞれの発言を、誰が話したかで分けること。高見舎では、自社側の人が付けたワイヤレスイヤホンの音量から、自社側とお客様側を見分けます。<span class="where"><a href="../records/tech.html">資料作成の技術詳細</a></span></dd>
+
+          <dt id="llm">LLM（大規模言語モデル）</dt>
+          <dd>大量の文章から学習した、文章を読んだり書いたりするAI。文字に起こした会話から議事録をまとめるのに使います。<span class="where"><a href="../records/tech.html">資料作成の技術詳細</a></span></dd>
+
+          <dt id="hallucination">ハルシネーション</dt>
+          <dd>AIが、もとの情報にない内容を、もっともらしく作り出してしまうこと。<span class="where"><a href="../records/tech.html">資料作成の技術詳細</a></span></dd>
+
+          <dt id="cer">文字誤り率（CER）</dt>
+          <dd>文字起こしの間違いの多さを表す数値。正しい文章と比べて、文字の抜け・余分・入れ違いが全体の何割あるかで表します。小さいほど正確です。<span class="where"><a href="../records/tech.html">資料作成の技術詳細</a></span></dd>
+
+          <dt id="local">ローカル処理</dt>
+          <dd>インターネット上のサービスを使わず、手元のコンピュータの中だけで処理すること。会話の内容を外に出さないために、議事録の仕組みはすべてローカルで動かしています。<span class="where"><a href="../records/tech.html">資料作成の技術詳細</a></span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="dev">
+      <div class="container prose">
+        <h2>開発</h2>
+        <dl class="glossary">
+          <dt id="poc">PoC（概念実証）</dt>
+          <dd>考えた方式が本当に使えそうかを、試作して確かめる段階。高見舎では、考えられる方式を削らずに全部つくって試験します。<span class="where"><a href="../project/">プロジェクトについて</a></span></dd>
+
+          <dt id="mvp">MVP（最小限の実用品）</dt>
+          <dd>PoC の結果をもとに、採用しなかった方式を削って仕上げた、実際に使える最小限の形。<span class="where"><a href="../project/">プロジェクトについて</a></span></dd>
+
+          <dt id="mirs">MIRS（ミルス）</dt>
+          <dd>沼津工業高等専門学校 電子制御工学科で行っている、チームでのシステム開発教育プログラム。<span class="where"><a href="../project/">プロジェクトについて</a></span></dd>
+
+          <dt id="ai-agent">AI エージェント</dt>
+          <dd>指示を受けて、コードを書く・動かして確かめるといった作業を自分で進めるAI。高見舎のソフトウェアは、AI エージェントにコードを書かせ、人と AI で確かめながら作っています。<span class="where"><a href="../project/development.html">ソフトウェアの開発の進め方</a></span></dd>
+
+          <dt id="cad">CAD（キャド）</dt>
+          <dd>コンピュータで部品や機体の形を設計するためのソフトウェア。<span class="where"><a href="../lift/">盤の上を見る</a></span></dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../day/">立会試験の1日</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+          <li><a href="../glossary/">用語集</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

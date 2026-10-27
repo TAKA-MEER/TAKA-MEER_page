@@ -1008,3 +1008,38 @@ figcaption {
 .prose > .deeper {
   margin-bottom: 24px;
 }
+
+/* 用語集（glossary/） */
+.glossary {
+  max-width: 38em;
+  margin: 24px 0 0;
+}
+
+.glossary dt {
+  margin-top: 24px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.glossary dt:first-child {
+  margin-top: 0;
+}
+
+.glossary dd {
+  margin: 4px 0 0;
+}
+
+.glossary .where {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.glossary .where::before {
+  content: "出てくるページ：";
+}
+
+.glossary dt:target {
+  color: var(--accent);
+}
