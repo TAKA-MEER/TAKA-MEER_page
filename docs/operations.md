@@ -113,7 +113,7 @@ docs/                  運用ドキュメント
 python tools/cad/export_robot_glb.py "<CADdata>/統合設計/統合設計.SLDASM"
 ```
 
-- SolidWorks でアセンブリを読み取り専用で開き、glb を書き出して軽量化する（約15MB → 約1MB）。CAD ファイルは変更しない
+- SolidWorks でアセンブリを読み取り専用で開き、glb を書き出して軽量化する（約34MB → 約2.5MB）。頂点の多すぎる部品（市販品の STEP など）は `SIMPLIFY_ABOVE`・`SIMPLIFY_CELL` で間引く。CAD ファイルは変更しない
 - 昇降の可動部は `tools/cad/export_robot_glb.py` の `STAGES`（どの部品が1段目・2段目か）と `TRAVEL`（各段の伸び）で決まる。昇降機の部品構成を変えたらここを直す。当たらないパターンがあると注意が出る
 - ページの「〇年〇月時点」は書き出した日付から自動で入る
 - 3Dモデルは画像より設計の情報量が多い。公開してよい範囲か（「公開してよい情報の基準」）を書き出しのたびに確認する

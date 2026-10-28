@@ -33,7 +33,6 @@ STAGES = {
         "後期本体設計-*/HFS5-2020-1200-1",
         "後期本体設計-*/HFS5-2020-1200-4",
         "後期本体設計-*/HFS5-2020-1200-5",
-        "後期本体設計-*/後期設計1-*",
         "後期本体設計-*/後期設計4-*",
         "後期本体設計-*/後期設計5-*",
         "後期本体設計-*/後期設計7-*",
@@ -42,11 +41,17 @@ STAGES = {
     "stage2": [
         "後期本体設計-*/HFS5-2020-1250-*",
         "後期設計3-*",
+        "カメラモジュール-*",  # 2段目の上端に載る
     ],
 }
 
 # 各段の伸び（m）。CAD の距離制限合致の最大値
 TRAVEL = {"stage1": 0.988, "stage2": 0.996}
+
+# 頂点がこれより多い部品（市販品の STEP など、ピンや刻印まで作り込まれたもの）は、
+# SIMPLIFY_CELL（m）角の格子で近い頂点をまとめて間引く
+SIMPLIFY_ABOVE = 5000
+SIMPLIFY_CELL = 0.002
 
 OUT_DEFAULT = os.path.join(os.path.dirname(__file__), "..", "..", "site", "assets", "models", "robot.glb")
 
@@ -199,6 +204,25 @@ def classify(gltf, tree):
 
 # ---- 軽量化して組み立て直す ----
 
+def simplify(pos, nrm, idx, cell):
+    """同じ格子に入り、向きも近い頂点を1つにまとめる（向きで分けるので角は丸まらない）"""
+    n = nrm / np.maximum(np.linalg.norm(nrm, axis=1, keepdims=True), 1e-9)
+    key = np.c_[np.floor(pos / cell), np.round(n * 3)].astype(np.int64)
+    _, inv, count = np.unique(key, axis=0, return_inverse=True, return_counts=True)
+    inv = inv.reshape(-1)
+    new_pos = np.zeros((len(count), 3))
+    np.add.at(new_pos, inv, pos)
+    new_pos /= count[:, None]
+    new_nrm = np.zeros((len(count), 3))
+    np.add.at(new_nrm, inv, n)
+    tri = inv[idx.reshape(-1, 3)]
+    tri = tri[(tri[:, 0] != tri[:, 1]) & (tri[:, 1] != tri[:, 2]) & (tri[:, 0] != tri[:, 2])]
+    used = np.unique(tri)
+    remap = np.zeros(len(count), np.int64)
+    remap[used] = np.arange(len(used))
+    return new_pos[used], new_nrm[used], remap[tri].reshape(-1)
+
+
 def build(gltf, binary, instances):
     out = {
         "asset": {"version": "2.0", "generator": "TAKA-MEER export_robot_glb.py"},
@@ -261,6 +285,13 @@ def build(gltf, binary, instances):
         key = hashlib.md5(b"".join(a.tobytes() for pos, nrm, idx, m in prims for a in (pos, idx)) + repr([m for *_, m in prims]).encode()).hexdigest()
         if key in mesh_cache:
             return mesh_cache[key]
+        if sum(len(pos) for pos, *_ in prims) > SIMPLIFY_ABOVE:
+            simplified = []
+            for pos, nrm, idx, m in prims:
+                small = simplify(pos, nrm, idx, SIMPLIFY_CELL)
+                # 格子より小さい面の集まりは消えてしまうので元のまま残す
+                simplified.append((*small, m) if len(small[2]) else (pos, nrm, idx, m))
+            prims = simplified
 
         all_pos = np.concatenate([pos for pos, *_ in prims])
         lo, hi = all_pos.min(axis=0), all_pos.max(axis=0)
