@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>盤の天面を測る | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="人の代わりに、測定器を配電盤の天面へ押し当てる機能。開発中のしくみを紹介します。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち2（しくみ）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>しくみ</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li aria-current="page">盤の天面を測る</li></ol></nav>
+        <h1>盤の天面を測る</h1>
+          <p class="code-name" lang="en">fk-system / ss-system</p>
+        <p class="lead">昇降機に取り付けた腕で、測定器を配電盤の天面に押し当てます。脚立に登って行う測定を、ロボットが代わりに行うための機能です。</p>
+      </div>
+    </div>
+
+    <section class="section" id="status">
+      <div class="container prose">
+        <h2>いま開発している機能です</h2>
+        <p>
+          このページに書いたのは、目指している動きです（2026年11月時点）。
+          測定の動きは仕様と設計を決めている段階で、腕の形も検討を続けています。
+          盤の位置を見つける画像認識はソフトウェアの実装が進み、ロボットのカメラにつなぐ前の段階です。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="why">
+      <div class="container prose">
+        <h2>見るだけでは、脚立を無くしきれない</h2>
+        <p>
+          カメラを持ち上げれば、盤の上面は床から確かめられます。
+          しかし話し合いの中で、見るだけでは危険な脚立での作業を無くしきれない、という声をいただきました。
+        </p>
+        <p>
+          そこで、膜厚と板厚（膜や板の厚さ）の測定を人の代わりに行うため、人が使う測定器をそのまま取り付けて押し当てる機能を開発しています。
+          測定器は、測る面に垂直に押し当てて使います。まず天面の測定を目指します。
+        </p>
+        <h3>示すのは「押し当てられること」</h3>
+        <p>
+          測定器は高価で購入できないため、形と接触の検知だけを再現したモックアップ（模型）を使います。
+          測定値は扱わず、押し当て終わると「値を保存しました」と表示するだけです。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="modes">
+      <div class="container prose">
+        <h2>2つの使い方</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"></th><th scope="col">立会試験中の測定</th><th scope="col">自律測定</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">使う場面</th><td>走行部で盤の前に着いたとき</td><td>立会試験以外でも。盤の前にいなくてよい</td></tr>
+              <tr><th scope="row">事前の準備</th><td>走行部の前日準備を使う</td><td>要らない。起動のたびに地図を作り直す</td></tr>
+              <tr><th scope="row">測る盤</th><td>目の前の盤</td><td>盤の配置図から選ぶ（複数可）</td></tr>
+              <tr><th scope="row">測る点</th><td>天面の中央の1点</td><td>天面の四隅と中央の5点</td></tr>
+              <tr><th scope="row">人の操作</th><td>「測定」ボタンを押す</td><td>自律動作を許可し、盤を選ぶ</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="system-figure">
+          <svg class="drawing" viewBox="0 0 560 240" role="img" aria-labelledby="points-title">
+            <title id="points-title">配電盤を上から見た図。左は天面の中央の1点を測る様子、右は同じ立ち位置から向きを変えて四隅と中央の5点を測る様子</title>
+            <g>
+              <g class="panel"><rect x="60" y="20" width="160" height="110"/></g>
+              <g class="dim"><line class="dim-ext" x1="140" y1="165" x2="140" y2="75"/></g>
+              <circle class="lamp-green" cx="140" cy="75" r="7"/>
+              <g class="safe"><rect class="body" x="118" y="165" width="44" height="30" rx="3"/></g>
+              <text class="dim-label" x="140" y="228" text-anchor="middle">中央の1点</text>
+            </g>
+            <g transform="translate(300 0)">
+              <g class="panel"><rect x="60" y="20" width="160" height="110"/></g>
+              <g class="dim">
+                <line class="dim-ext" x1="140" y1="165" x2="140" y2="75"/>
+                <line class="dim-ext" x1="140" y1="165" x2="80" y2="38"/>
+                <line class="dim-ext" x1="140" y1="165" x2="200" y2="38"/>
+                <line class="dim-ext" x1="140" y1="165" x2="80" y2="112"/>
+                <line class="dim-ext" x1="140" y1="165" x2="200" y2="112"/>
+              </g>
+              <circle class="lamp-green" cx="140" cy="75" r="7"/>
+              <circle class="lamp-green" cx="80" cy="38" r="7"/>
+              <circle class="lamp-green" cx="200" cy="38" r="7"/>
+              <circle class="lamp-green" cx="80" cy="112" r="7"/>
+              <circle class="lamp-green" cx="200" cy="112" r="7"/>
+              <g class="safe"><rect class="body" x="118" y="165" width="44" height="30" rx="3"/></g>
+              <text class="dim-label" x="140" y="228" text-anchor="middle">四隅と中央の5点</text>
+            </g>
+          </svg>
+          <figcaption>盤を上から見た図。腕は前後にしか動かないので、左右はクローラーのその場旋回で合わせます</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="flow">
+      <div class="container">
+        <div class="prose">
+          <h2>立会試験中の測定の流れ</h2>
+          <p>人が押すのは「測定」ボタンだけです。あとの動きは、途中で人の判断を待たずに進みます。</p>
+        </div>
+        <ol class="steps stack">
+          <li>
+            <h3>「測定」を押す</h3>
+            <p>走行部が盤の前に止まったあと、画面の「測定」ボタンを押します。</p>
+          </li>
+          <li>
+            <h3>カメラが天面を探す</h3>
+            <p>昇降機とカメラが自動で動き、天面を映して盤の位置を求めます。終わると元の高さに戻ります。天面が見つからなければ、中止するか、人がカメラを動かすかを選びます。</p>
+          </li>
+          <li>
+            <h3>測る点を決める</h3>
+            <p>求めた盤の位置から天面の中央を計算し、画面に表示します。</p>
+          </li>
+          <li>
+            <h3>横を向いて腕を起こす</h3>
+            <p>盤に向いたまま腕を起こすと盤に当たるので、90°向きを変えてから起こします。腕を十分に上げたら、向きを盤へ戻します。</p>
+          </li>
+          <li>
+            <h3>測定器を押し当てる</h3>
+            <p>腕を伸ばして、測定器を天面へ垂直に押し当てます。接触は先端のスイッチで検知します。</p>
+          </li>
+          <li>
+            <h3>格納して元に戻す</h3>
+            <p>腕を上げてから90°向きを変えて格納し、機体の向きと昇降機の高さを測定前に戻します。そのあと、走行部の操作に戻ります。</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="autonomous">
+      <div class="container prose">
+        <h2>自律測定の流れ</h2>
+        <p>盤の前まで人が運ばなくても、選んだ盤を順に回って測る、挑戦的な機能です。</p>
+        <ol class="flow">
+          <li><strong>周りの盤の配置図をつくる</strong><span>カメラを上げて周囲を撮り、盤の位置と向きを図にまとめます。起動のたびに作り直します。</span></li>
+          <li><strong>測る盤を選ぶ</strong><span>配置図から選びます。複数のときは、盤の正面に向かって右から順に回ります。</span></li>
+          <li><strong>昇降機を下げて、盤の前へ移動する</strong><span>SLAM（走りながら地図をつくり自分の位置を求める技術）で地図をつくりながら進み、必要なら経路を引き直します。</span></li>
+          <li><strong>同じ立ち位置で5点を測る</strong><span>盤の前で認識し直し、点ごとにその場で向きを変えて測ります。</span></li>
+          <li><strong>全部回ったら結果を出す</strong><span>測れなかった盤は飛ばして理由を残し、あとから一覧で選び直せます。</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="recognition">
+      <div class="container prose">
+        <h2>盤の位置は、吊り金具から求める</h2>
+        <p>
+          配電盤の天板には、吊り上げるための金具（吊り金具）が付いています。
+          カメラの画像から金具を1個ずつ見つけ、金具の位置と向きから、幾何の計算で盤の位置・向き・大きさを求めます。
+        </p>
+        <p>
+          金具を見つける AI は、CG でつくった画像（合成データ）で学習させています。
+          CG の画像で確かめた精度は、金具が4個見える盤で、95.5% が位置の誤差15cm以内でした。
+          実物の画像での精度は、まだ確かめられていません。
+        </p>
+        <p>
+          USB カメラの映像から金具をリアルタイムで見つけて表示するデモでは、金具を検出できることを確認しました（2026年11月）。
+          ただしこのデモでは盤の位置までは求めておらず、精度を示すものではありません。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="safety">
+      <div class="container prose">
+        <h2>製品に触れるのは測定器だけ</h2>
+        <p>ここまでの機能と違い、この機能だけは製品に触れます。そのため、次のことを決めて設計しています。</p>
+        <ul class="checks">
+          <li>製品に触れてよいのは測定器だけ。腕・機体・昇降機は触れさせない</li>
+          <li>自律測定でも、動き出すのは人が許可して盤を選んでから。走行部の非常停止は、測定の画面でも押せる</li>
+          <li>昇降機が下がりきっていないと、走り出さない。走っている間に昇降機が動いたら止まる</li>
+          <li>腕が出ている間は前後に走らない。向きを変えるときは、腕を十分に上げてから</li>
+          <li>腕を振る範囲は LiDAR（レーザーで周囲の距離を測るセンサー）で確かめ、塞がっていれば腕を動かさない</li>
+          <li>通信が切れたり途中で止まったりしたら、ロボットは自分から再開せず、人の判断を待つ</li>
+        </ul>
+        <p class="note">押し当てる力の上限や、測定器以外が当たらないことをどう保証するかは、まだ検討中です。</p>
+      </div>
+    </section>
+
+    <section class="section" id="deeper">
+      <div class="container">
+        <a class="deeper" href="tech.html">
+          <span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>
+          <span><strong>測定・画像認識の技術詳細へ</strong><span>システムの分担、腕の制御、自律測定の決まり、画像認識の方法と結果</span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかのページ</h2>
+        <ul class="siblings"><li><a href="../move/">盤の前まで運ぶ</a></li><li><a href="../lift/">盤の上を見る</a></li><li><a href="../records/">試験を記録する</a></li><li><a href="../project/">プロジェクトについて</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../day/">立会試験の1日</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../measure/">盤の天面を測る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+          <li><a href="../glossary/">用語集</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>

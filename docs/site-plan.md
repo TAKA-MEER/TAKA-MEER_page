@@ -39,9 +39,9 @@
 | 所属・体制 | 沼津高専 電子制御工学科の PBL「MIRS」、2026年度チーム MIRS2602 |
 | MIRS ドキュメント | https://www2.denshi.numazu-ct.ac.jp/mirsdoc2/mirs2602/ |
 | ロボットの用途 | 配電盤上部の確認 |
-| ソースコード | 走行系 [th-system](https://github.com/TAKA-MEER/th-system)、昇降・カメラ [hve-system](https://github.com/TAKA-MEER/hve-system) |
+| ソースコード | 走行系 [th-system](https://github.com/TAKA-MEER/th-system)、昇降・カメラ [hve-system](https://github.com/TAKA-MEER/hve-system)、測定 [fk-system](https://github.com/TAKA-MEER/fk-system)、画像認識 [ss-system](https://github.com/TAKA-MEER/ss-system) |
 
-ロボットの技術的な内容は [reference/robot-overview.md](../reference/robot-overview.md) を参照。
+ロボットの技術的な内容は [reference/robot-overview.md](../reference/robot-overview.md)、測定機能と画像認識は [reference/measurement-overview.md](../reference/measurement-overview.md) を参照。
 
 ## ページ構成
 
@@ -50,8 +50,8 @@
 | 詳しさ | 読者 | ページ |
 |---|---|---|
 | ●○○ 概要 | 一般の来場者 | `site/index.html`、`day/`（立会試験の1日。3機能を試験の流れでつなぐ） |
-| ●●○ しくみ | 興味を持った人 | `move/`（盤の前まで運ぶ）、`lift/`（盤の上を見る）、`records/`（試験を記録する）、`project/`（プロジェクトについて）、`project/lessons.html`（試行錯誤の記録）、`glossary/`（用語集） |
-| ●●● 技術詳細 | 技術者・審査員 | `move/tech.html`、`lift/tech.html`、`records/tech.html`、`lift/strength.html`（プーリー固定具の強度検証）、`project/development.html`（ソフトウェアの開発の進め方） |
+| ●●○ しくみ | 興味を持った人 | `move/`（盤の前まで運ぶ）、`lift/`（盤の上を見る）、`measure/`（盤の天面を測る）、`records/`（試験を記録する）、`project/`（プロジェクトについて）、`project/lessons.html`（試行錯誤の記録）、`glossary/`（用語集） |
+| ●●● 技術詳細 | 技術者・審査員 | `move/tech.html`、`lift/tech.html`、`measure/tech.html`、`records/tech.html`、`lift/strength.html`（プーリー固定具の強度検証）、`project/development.html`（ソフトウェアの開発の進め方） |
 
 書き分けのルール：
 
@@ -68,6 +68,7 @@
 |---|---|
 | 盤の前まで運ぶ | th-system |
 | 盤の上を見る | hve-system |
+| 盤の天面を測る | fk-system（測定）、ss-system（画像認識）。開発中なので、状態が変わったら `measure/` の記述を直す |
 | 試験を記録する | lr-system（議事録）、成績表アプリ（リポジトリ未確認） |
 
 ## 未確定事項

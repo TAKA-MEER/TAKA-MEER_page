@@ -28,6 +28,7 @@
           <li><a href="#general">全体</a></li>
           <li><a href="#move">走行</a></li>
           <li><a href="#lift">昇降・カメラ</a></li>
+          <li><a href="#measure">測定・画像認識</a></li>
           <li><a href="#records">記録</a></li>
           <li><a href="#dev">開発</a></li>
         </ul>
@@ -48,7 +49,7 @@
           <dd>ブラウザで開く操作画面。専用のアプリを入れなくても、タブレットやPCで使えます。<span class="where"><a href="../move/tech.html">走行部の技術詳細</a></span></dd>
 
           <dt id="mockup">モックアップ</dt>
-          <dd>見た目と操作の流れを確かめるための見本。このサイトから見られる操作画面のモックアップは、実際のロボットにはつながっていません。<span class="where"><a href="../project/#source">プロジェクトについて</a></span></dd>
+          <dd>見た目と操作の流れを確かめるための見本。このサイトから見られる操作画面のモックアップは、実際のロボットにはつながっていません。測定機能では、形と接触の検知だけを再現した測定器のモックアップを使います。<span class="where"><a href="../project/#source">プロジェクトについて</a></span></dd>
 
           <dt id="e-stop">非常停止ボタン</dt>
           <dd>押すとすぐに機械を止めるためのボタン。高見舎では、機体のボタンを押すと走行部と昇降機の電源が切れます。<span class="where"><a href="../lift/tech.html">昇降・カメラの技術詳細</a></span></dd>
@@ -133,6 +134,34 @@
       </div>
     </section>
 
+    <section class="section" id="measure">
+      <div class="container prose">
+        <h2>測定・画像認識</h2>
+        <dl class="glossary">
+          <dt id="thickness">膜厚・板厚</dt>
+          <dd>膜の厚さと、板の厚さ。どちらも測定器を面に垂直に押し当てて測ります。<span class="where"><a href="../measure/">盤の天面を測る</a></span></dd>
+
+          <dt id="measure-arm">測定機構（腕）</dt>
+          <dd>昇降機に取り付いて一緒に上下し、測定器を前後に動かす仕組み。左右には動かせないので、機体の向きを変えて合わせます。<span class="where"><a href="../measure/">盤の天面を測る</a></span></dd>
+
+          <dt id="autonomous-measure">自律測定</dt>
+          <dd>使う人が盤を選ぶだけで、ロボットが選ばれた盤を順に回って測る使い方。事前の準備は要らず、起動のたびに地図を作り直します。<span class="where"><a href="../measure/">盤の天面を測る</a></span></dd>
+
+          <dt id="layout-map">配置図</dt>
+          <dd>周囲の配電盤の位置・向き・大きさをまとめた図。自律測定で、測る盤を選ぶのに使います。<span class="where"><a href="../measure/">盤の天面を測る</a></span></dd>
+
+          <dt id="lifting-lug">吊り金具</dt>
+          <dd>配電盤を吊り上げるために、天板に付いている金具。画像からこの金具を見つけて、盤の位置を求めます。<span class="where"><a href="../measure/">盤の天面を測る</a></span></dd>
+
+          <dt id="synthetic-data">合成データ</dt>
+          <dd>実物を撮影する代わりに、CG でつくった画像のデータ。AI の学習や評価に使います。<span class="where"><a href="../measure/">盤の天面を測る</a></span></dd>
+
+          <dt id="keypoint">キーポイント</dt>
+          <dd>画像の中で物の形を表す、決まった点。吊り金具では、根元・リング中心・リング面の両端の4点です。<span class="where"><a href="../measure/tech.html">測定・画像認識の技術詳細</a></span></dd>
+        </dl>
+      </div>
+    </section>
+
     <section class="section" id="records">
       <div class="container prose">
         <h2>記録</h2>
@@ -189,6 +218,7 @@
           <li><a href="../day/">立会試験の1日</a></li>
           <li><a href="../move/">盤の前まで運ぶ</a></li>
           <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../measure/">盤の天面を測る</a></li>
           <li><a href="../records/">試験を記録する</a></li>
           <li><a href="../project/">プロジェクトについて</a></li>
           <li><a href="../glossary/">用語集</a></li>

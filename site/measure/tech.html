@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>測定・画像認識の技術詳細 | 高見舎 TAKA-MEER</title>
+  <meta name="description" content="測定機能 fk-system と画像認識 ss-system の分担、腕の制御、自律測定の決まり、吊り金具による盤の位置推定と結果。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="logo" href="../">高見舎 <span lang="en">TAKA-MEER</span></a>
+      <p class="depth" aria-label="このページの詳しさ：3段階のうち3（技術詳細）"><span class="lamps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span>技術詳細</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="container">
+        <nav class="crumbs" aria-label="現在地"><ol><li><a href="../">概要</a></li><li><a href="./">盤の天面を測る</a></li><li aria-current="page">技術詳細</li></ol></nav>
+        <h1>測定・画像認識の技術詳細</h1>
+          <p class="code-name" lang="en">fk-system / ss-system</p>
+        <p class="lead">既存の走行部と昇降機・カメラを組み合わせて測定する fk-system と、盤の位置を画像から求める ss-system の設計をまとめます。内容は2026年11月9日時点の仕様です。</p>
+      </div>
+    </div>
+
+    <section class="section" id="status">
+      <div class="container prose">
+        <h2>開発の状況</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">範囲</th><th scope="col">状態</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">fk-system</th><td>仕様と詳細設計の段階。実装は未着手</td></tr>
+              <tr><th scope="row">測定機構</th><td>設計は未定で、構成機器は変わりうる。仕様は機器名に依存しない書き方にしている</td></tr>
+              <tr><th scope="row">ss-system</th><td>推定・依頼の流れ・ROS 2 のノードを実装済み。自動試験は偽の昇降機とカメラを相手にしたもの</td></tr>
+              <tr><th scope="row">ロボットとの接続</th><td>待ち。昇降機・カメラ側の接続口と、カメラの内部パラメータの校正が残っている</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roles">
+      <div class="container prose">
+        <h2>システムの分担</h2>
+        <p>判断は測定機能が持ち、実行はそれぞれのシステムが受け持ちます。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">システム</th><th scope="col">受け持つこと</th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/fk-system">fk-system</a></th><td>測定全体の判断。目的地・経路の再計算・盤の前での旋回の指示、昇降機の操作、測る点の決定、測定機構の操作</td></tr>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/ss-system">ss-system</a></th><td>方向の範囲を受け取り、カメラと昇降機を動かして、その範囲の盤の位置を返す</td></tr>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/th-system">th-system</a></th><td>経路の計画・走行制御・停止、動き出す前の周囲の確認</td></tr>
+              <tr><th scope="row"><a href="https://github.com/TAKA-MEER/hve-system">hve-system</a></th><td>昇降機とカメラ。天井の距離・上限・下限は昇降機の制御器が命令を拒否して守る</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          fk-system と ss-system は、走行部と同じノートパソコン（Ubuntu 22.04・GPU なし）で、それぞれ別の Docker コンテナとして動かします。
+          両者は ROS 2 でつなぎます。
+          画面は走行部の画面を主とし、走行部の盤前の「測定機能へ」やメインメニューの「自律測定」から移ります。
+        </p>
+        <h3>設計思想（抜粋）</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">FD-5</th><td>製品に触れるのは測定器だけ。走行系も、測定器以外の部分も製品に接触させない</td></tr>
+              <tr><th scope="row">FD-6</th><td>測定機構の構成機器は変わりうる。機器を替えても仕様が変わらないように書く</td></tr>
+              <tr><th scope="row">FD-8</th><td>人の代わりに操作の判断の一部を行う。判断は fk-system、実行する制御は各システムが持つ</td></tr>
+              <tr><th scope="row">FD-11</th><td>昇降機は fk-system と ss-system の両方が動かす。ss-system の操作中に動かさないよう気をつけるのは fk-system</td></tr>
+              <tr><th scope="row">FD-12</th><td>fk-system は走行部に対して人と同等の権限を持つ。明示操作は「許可する」の押下と盤の選択</td></tr>
+              <tr><th scope="row">FD-14</th><td>走行の前の安全は fk-system が自分で確かめる。ss-system の後片付けを当てにしない</td></tr>
+              <tr><th scope="row">SSD-6</th><td>ss-system は盤の位置を返すだけの機能とし、測定以外のシステムからも使えるようにする</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          昇降・カメラと走行部を直接つなぐ設計は持ち込みません（hve-system の HD-1 はそのまま）。走行と昇降を組み合わせる判断は fk-system に置きます。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="arm">
+      <div class="container prose">
+        <h2>測定機構の制御</h2>
+        <p>測定機構は昇降機に取り付いて一緒に上下し、測定器を前後に動かせます。左右には動かせないので、クローラーのその場旋回で合わせます。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">制御器</th><th scope="col">受け持つこと</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">アームの制御器</th><td>腕の根元に置き、無線と電池で動く。腕の伸縮・先端の上下、接触の検知（スイッチ）、天面までの距離（距離計）、腕の角度の検知。測定の間は昇降機を主導して動かす。腕の操作画面を自分で配信する</td></tr>
+              <tr><th scope="row">昇降機の制御器</th><td>昇降機と、腕を起こすドラム。送られてくる腕の角度が一定になるようにドラムをフィードバック制御するので、誰が昇降機を動かしてもドラムがついていく</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>1点を測る手順</h3>
+        <ol class="flow">
+          <li><strong>90°旋回 → 昇降機を上げる → 腕を起こす</strong><span>盤に向いたまま起こすと腕が盤に当たる。左右は腕が振れる範囲が空いている側を選ぶ。</span></li>
+          <li><strong>腕を十分に上げ、90°戻して向きを合わせる</strong><span>十分とは、腕が盤の天面の排気口と余裕を足した高さより上に出ること。</span></li>
+          <li><strong>開始の指示と測定点までの水平距離をアームの制御器へ渡す</strong><span>ここから「伸びを戻す」までをアームの制御器に任せる。</span></li>
+          <li><strong>腕を伸ばし、距離計の値で昇降機を大まかに下げ、先端で当てる</strong><span>測定器はモックアップなので値は扱わず、「値を保存しました」と示す。</span></li>
+          <li><strong>先端を上げ、伸びを戻す</strong><span>この状態なら、腕を起こしたまま次の点へ旋回してよい。</span></li>
+          <li><strong>腕を十分に上げて 90°旋回し、格納する</strong><span>立会試験では、着いたときの向きと測定前の高さへ戻してから「測定を終えた」を返す。これが走行部の停止命令を解く合図。</span></li>
+        </ol>
+        <p class="note">最後に押し当てる動きの機構は検討中です。昇降機は自重で下がるので、昇降機を下げて押し当てるとロープがたるみます。いまの仮の構成では、腕の先端の上下で当てます。</p>
+      </div>
+    </section>
+
+    <section class="section" id="rules">
+      <div class="container prose">
+        <h2>安全の決まり</h2>
+        <p>値はいずれも暫定で、実機で調整します。</p>
+        <h3>走行と昇降の排他</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">場面</th><th scope="col">振る舞い</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">動き出す前</th><td>昇降機が下端に着いていなければ、目的地も発進も出さない。要れば先に自分で下げる</td></tr>
+              <tr><th scope="row">走っている間</th><td>昇降機が下端から 50mm 以上離れたら「停止」（走行の揺れを実機で測って決め直す）</td></tr>
+              <tr><th scope="row">盤の前での旋回</th><td>測るために昇降機を上げるので、高さで止める対象から外す。腕を起こしたまま並進はしない</td></tr>
+              <tr><th scope="row">盤の前の立ち位置</th><td>1盤につき1か所。盤面から機体の中心まで 0.389m 以上離す（走行部の動き出す前の確認に盤を入れないため）</td></tr>
+              <tr><th scope="row">一時停止からの再開</th><td>いつも人の「走行」で行う。fk-system が自分の判断で発進を出さない</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>測れない・動けないとき</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">扱い</th><th scope="col">場面</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">その盤を飛ばす</th><td>経路が見つからない／天面が見つからない／腕が振れる範囲が左右とも塞がっている／正面側の床が塞がっていて立てない</td></tr>
+              <tr><th scope="row">全体を止めて人を待つ</th><td>腕が出たまま動けない／昇降機を下げられない／昇降機の高さか腕の状態が読めない／ss-system の後片付けの完了が来ない</td></tr>
+              <tr><th scope="row">腕が出ている間に通信が切れた</th><td>昇降機も動かさず止める（下げると伸びた腕が盤へ降りるため）。通信が戻っても自分から再開せず、続けるか格納するかを人が選ぶ</td></tr>
+              <tr><th scope="row">自己位置を見失った</th><td>地図と配置図を信用せず、人が自律測定に入り直す。盤の前で腕が出ているときは、人がジョグと腕のマニュアル操作で格納する</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          腕が振れる範囲は、fk-system が範囲を渡し、走行部が LiDAR で確かめて左右それぞれ「空いている／塞がっている／確かめられない」を返します。「確かめられない」は塞がっているのと同じに扱います。
+          LiDAR が見るのは床から約32cmの水平な面だけなので、開いた盤の扉のように<strong>それより上にある物は当面確かめません</strong>。既知のリスクとして残し、試験で様子を見ます。
+        </p>
+        <p>人の操作は拒否せず、昇降機と腕は最後の操作が勝ちます。操作されたら自動の動きは止まり、人を待ちます。異常のときに人が行うジョグと腕のマニュアル操作は、人が責任を負います。</p>
+      </div>
+    </section>
+
+    <section class="section" id="recognition">
+      <div class="container prose">
+        <h2>画像認識（ss-system）</h2>
+        <h3>受け取るものと返すもの</h3>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">受け取る</th><td>盤を探す方位角の範囲（機体の前が 0°）と制限時間</td></tr>
+              <tr><th scope="row">返す</th><td>盤ごとの天面の矩形（中心・高さ・向き・幅・奥行き）と確からしさ（位置と向きの標準偏差、使った金具の数）、実際に見た方位角の範囲</td></tr>
+              <tr><th scope="row">見つからないとき</th><td>空の一覧と理由（金具が見えない、盤に組めない、必要な高さまで上がれない、時間切れなど）</td></tr>
+              <tr><th scope="row">座標</th><td>依頼を受けた時点の機体を基準にしたローカル座標系。LiDAR の地図は使わない</td></tr>
+              <tr><th scope="row">終わり方</th><td>「結果」と「後片付けの完了」を分けて返す。依頼側は完了を受けるまで機体と昇降機を動かさない</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>推定の方法</h3>
+        <p>1280×720 の静止画を、必要なときだけ撮ります。カメラは天板より 0.6〜0.9m 上から見下ろし10°以上、盤まで5m以内を前提に、ヨーを少しずつ振って撮ります。</p>
+        <ol class="flow">
+          <li><strong>検出</strong><span>YOLO11s-pose で金具を1個ずつ検出する。キーポイントは根元・リング中心・リング面の両端の4点。</span></li>
+          <li><strong>持ち上げ</strong><span>根元の画素を天板の高さの水平面に投影し、両端の2点からリング面の向きを求める。</span></li>
+          <li><strong>統合</strong><span>複数の視点で見た同じ金具を1つにまとめる。</span></li>
+          <li><strong>組分け</strong><span>リング面は盤の中心を通るという取り付けの規則を使い、金具を盤ごとに分ける。</span></li>
+          <li><strong>当てはめ</strong><span>金具3〜4個から長方形を当てはめる。金具2個の盤は、背中合わせの盤の正面2個とみなして正面まで決める。</span></li>
+        </ol>
+        <p>
+          はじめは盤1面を1つとして検出していましたが、実物の接写で盤を1面も検出できず、金具2個しかない背中合わせの盤も解けなかったため、金具を1個ずつ検出する方式に変えました。
+        </p>
+        <p>
+          カメラの位置には、昇降部が配信する高さと、サーボの目標角を使います。盤の高さはカメラ1台では測れないため既定値を使い、測った値でないことを結果に示します。
+          推論は CPU で動かし、ノートパソコンで1枚約250msでした。学習はデスクトップPCの GPU で行います。推定には ultralytics（AGPL-3.0）を使っています。
+        </p>
+        <h3>合成データでの結果</h3>
+        <p>Blender で作った合成データの評価用セット（100シーン×4か所）の結果です。<strong>実物の画像での定量評価はできていません。</strong></p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">項目</th><th scope="col">結果</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">金具の検出率／適合率</th><td class="num">99.5% / 98.2%</td></tr>
+              <tr><th scope="row">根元の誤差（中央値）</th><td class="num">0.35 px</td></tr>
+              <tr><th scope="row">金具4個の盤：組み立てた割合</th><td class="num">96.1%</td></tr>
+              <tr><th scope="row">金具4個の盤：位置15cm以内</th><td class="num">95.5%</td></tr>
+              <tr><th scope="row">金具4個の盤：軸5°以内</th><td class="num">78.4%</td></tr>
+              <tr><th scope="row">金具2個の盤：組み立てた割合</th><td class="num">84.1%</td></tr>
+              <tr><th scope="row">金具2個の盤：位置15cm以内</th><td class="num">97.6%</td></tr>
+              <tr><th scope="row">金具2個の盤：正面の取り違え</th><td class="num">0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>軸が5°以内に入らなかった盤の多くは、幅と奥行の取り違えです。配置図向けの暫定の目標は、検出95%以上・位置±15cm・向き±5°としています。</p>
+        <p class="note">USB カメラの映像で金具を表示するデモは本番外の道具で、盤の位置は求めません。モデルは本番のカメラの写りに合わせて学習しているため、このデモの結果は精度の根拠にしていません。</p>
+      </div>
+    </section>
+
+    <section class="section" id="open">
+      <div class="container prose">
+        <h2>まだ決まっていないこと</h2>
+        <ul class="checks">
+          <li>押し当てる力の上限と、測定器以外が製品に当たらないことの保証の方法</li>
+          <li>天面へ押し当てる最後の動きの機構</li>
+          <li>測る点の位置決めに要る精度と、画像によるフィードバック修正を入れるか</li>
+          <li>「四隅」を縁からどれだけ内側にとるか、立ち位置の余裕の値</li>
+          <li>カメラのヨーの向きを測る方法（昇降機・カメラ側の改良待ち）</li>
+          <li>実物の画像での検出と盤の位置の精度</li>
+        </ul>
+        <p>
+          仕様・設計の全体は <a href="https://github.com/TAKA-MEER/fk-system">fk-system</a>、<a href="https://github.com/TAKA-MEER/ss-system">ss-system</a> のリポジトリの <code>docs/plan/spec/</code> にあります。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="others">
+      <div class="container prose">
+        <h2>ほかの技術詳細</h2>
+        <ul class="siblings"><li><a href="../move/tech.html">走行部の技術詳細</a></li><li><a href="../lift/tech.html">昇降・カメラの技術詳細</a></li><li><a href="../records/tech.html">資料作成の技術詳細</a></li><li><a href="../project/development.html">開発の進め方</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <nav aria-label="サイト内">
+        <ul class="siblings">
+          <li><a href="../">概要</a></li>
+          <li><a href="../day/">立会試験の1日</a></li>
+          <li><a href="../move/">盤の前まで運ぶ</a></li>
+          <li><a href="../lift/">盤の上を見る</a></li>
+          <li><a href="../measure/">盤の天面を測る</a></li>
+          <li><a href="../records/">試験を記録する</a></li>
+          <li><a href="../project/">プロジェクトについて</a></li>
+          <li><a href="../glossary/">用語集</a></li>
+        </ul>
+      </nav>
+      <p><a href="https://github.com/TAKA-MEER">TAKA-MEER on GitHub</a></p>
+      <small>&copy; 2026 高見舎（MIRS2602）</small>
+    </div>
+  </footer>
+</body>
+</html>
